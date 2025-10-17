@@ -1,0 +1,67 @@
+/* React Native Web 스크롤 개선을 위한 CSS */
+
+/* 전체 페이지 스크롤 개선 */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* React Native Web 컨테이너 */
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ScrollView 컴포넌트 개선 */
+[data-scrollview] {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  height: 100%;
+}
+
+/* 가로 스크롤 개선 */
+[data-scrollview-horizontal] {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 스크롤바 스타일링 (웹에서만) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 터치 디바이스에서 스크롤 개선 */
+@media (hover: none) and (pointer: coarse) {
+  [data-scrollview] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* 키보드 네비게이션 지원 */
+[data-scrollview]:focus {
+  outline: none;
+}
+
+/* 스크롤 성능 최적화 */
+[data-scrollview] {
+  will-change: scroll-position;
+  transform: translateZ(0);
+}
