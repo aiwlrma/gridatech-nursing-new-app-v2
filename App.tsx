@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { BottomNavigation } from './src/components/BottomNavigation';
 import { TimetableProvider } from './src/contexts/TimetableContext';
 import { SmartHomeScreen } from './src/screens/SmartHomeScreen';
@@ -180,6 +180,23 @@ const App = () => {
   const shouldHideBottomNavigation = currentScreen === 'reservationManagement';
   
   console.log('isModalScreen:', isModalScreen, 'currentScreen:', currentScreen);
+
+  // 웹에서 화면 전환 시 항상 최상단으로 스크롤 복원
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      try {
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        }
+        const rootEl = document.getElementById('root');
+        if (rootEl) {
+          rootEl.scrollTop = 0;
+        }
+      } catch (e) {
+        // no-op: 일부 환경에서 document 접근 불가할 수 있음
+      }
+    }
+  }, [currentScreen]);
 
   const handleTabPress = (tabId: string) => {
     console.log('탭 클릭:', tabId);
