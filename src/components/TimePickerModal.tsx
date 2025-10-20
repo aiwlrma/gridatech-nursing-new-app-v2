@@ -53,12 +53,12 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      transparent
+      animationType="fade"
+      transparent={true}
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <View style={styles.modalContainer}>
           {/* 헤더 */}
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
@@ -146,14 +146,22 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  modalContent: {
-    backgroundColor: COLORS.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: SIZES.spacing.lg,
-    maxHeight: '70%',
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    maxHeight: '90%',
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
   },
   header: {
     flexDirection: 'row',

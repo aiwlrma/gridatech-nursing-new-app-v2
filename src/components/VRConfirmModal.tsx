@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { NursingBadge } from '../data/nursingBadges';
+import { SvgIcon } from './SvgIcon';
 
 interface VRConfirmModalProps {
   visible: boolean;
@@ -44,7 +45,10 @@ export const VRConfirmModal: React.FC<VRConfirmModalProps> = ({
           >
             {/* 헤더 */}
             <View style={styles.header}>
-              <Text style={styles.title}>VR 실습을 시작할까요?</Text>
+              <View style={styles.titleRow}>
+                <SvgIcon name="vrHeadset" size={24} color="#1884FF" />
+                <Text style={styles.title}>VR 실습을 시작할까요?</Text>
+              </View>
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                 <Text style={styles.closeIcon}>✕</Text>
               </TouchableOpacity>
@@ -189,6 +193,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 24,
+  },
+  
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   
   title: {

@@ -1,0 +1,276 @@
+/* iOS 시뮬레이터 스타일 */
+.ios-simulator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #1a1a1a;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* iOS 기기 선택 컨트롤 */
+.device-selector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  padding: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.device-selector select {
+  background: #2c2c2e;
+  color: #ffffff;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.device-selector select:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+/* iPhone 14 Pro (기본) */
+.simulator-frame {
+  width: 375px;
+  height: 812px;
+  background: #2c2c2e;
+  border-radius: 50px;
+  padding: 8px;
+  box-shadow: 
+    0 0 0 2px #3a3a3c,
+    0 0 40px rgba(0, 0, 0, 0.6),
+    0 0 80px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transform: scale(1);
+  transition: all 0.3s ease;
+  max-width: 100%;
+  max-height: 100vh;
+  box-sizing: border-box;
+}
+
+.simulator-screen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 42px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dynamic Island */
+.simulator-screen::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 30px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 20;
+}
+
+/* 앱 컨텐츠 영역 */
+#root {
+  width: 100%;
+  height: 100%;
+  background: #f8f9fa;
+  border-radius: 42px;
+  overflow: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* iPhone 14 Pro Max */
+.ios-simulator.iphone-14-pro-max .simulator-frame {
+  width: 430px;
+  height: 930px;
+}
+
+/* iPhone 14 */
+.ios-simulator.iphone-14 .simulator-frame {
+  width: 390px;
+  height: 844px;
+}
+
+/* iPhone 13 Pro */
+.ios-simulator.iphone-13-pro .simulator-frame {
+  width: 390px;
+  height: 844px;
+}
+
+/* iPhone 13 */
+.ios-simulator.iphone-13 .simulator-frame {
+  width: 375px;
+  height: 812px;
+}
+
+/* iPhone 12 Pro */
+.ios-simulator.iphone-12-pro .simulator-frame {
+  width: 390px;
+  height: 844px;
+}
+
+/* iPhone 12 */
+.ios-simulator.iphone-12 .simulator-frame {
+  width: 375px;
+  height: 812px;
+}
+
+/* iPhone SE */
+.ios-simulator.iphone-se .simulator-frame {
+  width: 320px;
+  height: 568px;
+  border-radius: 30px;
+  padding: 6px;
+}
+
+.ios-simulator.iphone-se .simulator-screen {
+  border-radius: 25px;
+}
+
+.ios-simulator.iphone-se #root {
+  border-radius: 25px;
+}
+
+/* iPhone SE는 Dynamic Island 없음 */
+.ios-simulator.iphone-se .simulator-screen::before {
+  display: none;
+}
+
+/* iPad */
+.ios-simulator.ipad .simulator-frame {
+  width: 600px;
+  height: 800px;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.ios-simulator.ipad .simulator-screen {
+  border-radius: 15px;
+}
+
+.ios-simulator.ipad #root {
+  border-radius: 15px;
+}
+
+.ios-simulator.ipad .simulator-screen::before {
+  display: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .ios-simulator {
+    padding: 15px;
+  }
+  
+  .simulator-frame {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .ios-simulator {
+    padding: 10px;
+  }
+  
+  .simulator-frame {
+    transform: scale(0.8);
+    width: 100%;
+    max-width: 375px;
+    height: 100vh;
+    max-height: 812px;
+  }
+  
+  .device-selector {
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ios-simulator {
+    padding: 5px;
+  }
+  
+  .simulator-frame {
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 480px) {
+  .ios-simulator {
+    padding: 0;
+  }
+  
+  .simulator-frame {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    transform: scale(1);
+  }
+  
+  .device-selector {
+    display: none;
+  }
+}
+
+/* 작은 화면에서 스케일 조정 */
+@media (max-width: 400px) {
+  .simulator-frame {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 360px) {
+  .simulator-frame {
+    transform: scale(0.8);
+  }
+}
+
+/* iOS 시뮬레이터 스크롤 개선 */
+.simulator-screen {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 터치 디바이스에서 스크롤 개선 */
+@media (hover: none) and (pointer: coarse) {
+  #root {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
+}
+
+/* 스크롤바 스타일링 (iOS 시뮬레이터에서) */
+#root::-webkit-scrollbar {
+  width: 6px;
+}
+
+#root::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#root::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+#root::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

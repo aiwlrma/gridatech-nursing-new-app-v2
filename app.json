@@ -4,10 +4,10 @@
     "slug": "new-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/characters/sun.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/characters/sun.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,13 +20,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/characters/sun.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.yourcompany.newapp"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "template": "./public/index.html",
+      "bundler": "metro"
     },
     "packagerOpts": {
       "port": 8081

@@ -12,10 +12,7 @@ import {
   Edit3, 
   Search, 
   Check, 
-  User, 
-  Phone, 
   MessageCircle, 
-  Settings,
   ArrowLeft
 } from 'lucide-react-native';
 import { Message, MessageFilter } from '../types';
@@ -93,20 +90,6 @@ const mockMessages: Message[] = [
     color: '#EF4444',
   },
   {
-    id: '6',
-    senderId: 'student3',
-    senderName: '정하늘',
-    senderInitial: '정',
-    message: '프로젝트 발표 자료 공유해주세요',
-    timestamp: '6시간 전',
-    category: '동료',
-    isRead: false,
-    isImportant: false,
-    unreadCount: 1,
-    isOnline: false,
-    color: '#06B6D4',
-  },
-  {
     id: '7',
     senderId: 'prof3',
     senderName: '최교수',
@@ -121,18 +104,46 @@ const mockMessages: Message[] = [
     color: '#F97316',
   },
   {
-    id: '8',
-    senderId: 'student4',
-    senderName: '한지민',
-    senderInitial: '한',
-    message: '스터디 그룹 모집합니다',
-    timestamp: '2일 전',
+    id: '9',
+    senderId: 'prof4',
+    senderName: '강교수',
+    senderInitial: '강',
+    message: '기말고사 범위 안내드립니다',
+    timestamp: '3일 전',
+    category: '교수님',
+    isRead: false,
+    isImportant: true,
+    unreadCount: 1,
+    isOnline: false,
+    color: '#EC4899',
+  },
+  {
+    id: '10',
+    senderId: 'student5',
+    senderName: '윤서연',
+    senderInitial: '윤',
+    message: '프로젝트 발표 시간 조정 가능한가요?',
+    timestamp: '4일 전',
     category: '동료',
     isRead: true,
     isImportant: false,
     unreadCount: 0,
     isOnline: true,
-    color: '#84CC16',
+    color: '#8B5CF6',
+  },
+  {
+    id: '11',
+    senderId: 'system2',
+    senderName: '시스템',
+    senderInitial: '시',
+    message: '새로운 공지사항이 등록되었습니다',
+    timestamp: '5일 전',
+    category: '알림',
+    isRead: false,
+    isImportant: false,
+    unreadCount: 2,
+    isOnline: false,
+    color: '#F59E0B',
   },
 ];
 
@@ -181,16 +192,14 @@ export const MessageScreen: React.FC<MessageScreenProps> = ({ onNavigateToChat, 
       onPress={() => handleMessagePress(item)}
       activeOpacity={0.6}
     >
-      {/* 프로필 + 온라인 상태 */}
+      {/* 아바타 (작게) */}
       <View style={styles.avatarContainer}>
         <View style={[styles.avatar, {backgroundColor: item.color + '20'}]}>
           <Text style={[styles.initial, {color: item.color}]}>
             {item.senderInitial}
           </Text>
         </View>
-        {item.isOnline && (
-          <View style={styles.onlineBadge} />
-        )}
+        {item.isOnline && <View style={styles.onlineBadge} />}
       </View>
       
       {/* 메시지 컨텐츠 */}
@@ -225,6 +234,9 @@ export const MessageScreen: React.FC<MessageScreenProps> = ({ onNavigateToChat, 
               <Text style={styles.badgeText}>{item.unreadCount}</Text>
             </View>
           )}
+          {item.isRead && (
+            <Text style={styles.readIcon}>✓✓</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -241,146 +253,102 @@ export const MessageScreen: React.FC<MessageScreenProps> = ({ onNavigateToChat, 
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={onBack} style={styles.backButton}>
-            <ArrowLeft size={24} color="#191F28" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleEditPress}>
-            <Text style={styles.editButton}>편집</Text>
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        {/* 헤더 (단순화) */}
+        <View style={styles.header}>
+          <Text style={styles.title}>메시지</Text>
         </View>
-        
-        <Text style={styles.title}>메시지</Text>
-        
-        <TouchableOpacity style={styles.composeButton} onPress={handleComposePress}>
-          <Edit3 size={24} color="#1884FF" />
-        </TouchableOpacity>
-      </View>
 
-      {/* 검색 바 */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={20} color="#9CA3AF" />
+        {/* 검색창 (작게) */}
+        <View style={styles.searchContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
-            placeholder="메시지 검색"
             style={styles.searchInput}
+            placeholder="메시지 검색"
+            placeholderTextColor="#9CA3AF"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor="#9CA3AF"
           />
         </View>
-      </View>
 
-      {/* 메시지 리스트 */}
-      <FlatList
-        data={filteredMessages}
-        renderItem={renderMessage}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.messageList}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmptyState}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
-
-      {/* 하단 네비게이션 */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <User size={24} color="#9CA3AF" />
-          <Text style={styles.navLabel}>계정</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItem}>
-          <Phone size={24} color="#9CA3AF" />
-          <Text style={styles.navLabel}>통화</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItemActive}>
-          <MessageCircle size={24} color="#1884FF" />
-          <Text style={styles.navLabelActive}>메시지</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItem}>
-          <Settings size={24} color="#9CA3AF" />
-          <Text style={styles.navLabel}>설정</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        {/* 메시지 리스트 */}
+        <FlatList
+          data={filteredMessages}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.id}
+          style={styles.messageList}
+          contentContainerStyle={styles.messageListContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyState}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAFAFA',
   },
   
-  // 헤더
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-    backgroundColor: '#FFFFFF',
-  },
-  headerLeft: {
+  safeArea: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
-  backButton: {
-    marginRight: 12,
-    padding: 4,
-  },
-  editButton: {
-    fontSize: 17,
-    color: '#1884FF',
+  
+  // 헤더 (단순화)
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: '#191F28',
   },
-  composeButton: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
   
-  // 검색
+  // 검색창 (작게)
   searchContainer: {
-    padding: 8,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
-    borderRadius: 10,
+    marginHorizontal: 16,
+    marginVertical: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    borderRadius: 8,
+  },
+  searchIcon: {
+    fontSize: 16,
+    marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '400',
     color: '#191F28',
   },
   
   // 메시지 리스트
   messageList: {
-    flexGrow: 1,
-    paddingBottom: 100, // 하단 네비게이션 공간
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   
-  // 메시지 행 (핵심!)
+  messageListContent: {
+    flexGrow: 1,
+    paddingBottom: 80, // 하단 네비게이션 바 높이만큼 여백 추가
+  },
+  
+  // 메시지 행 (타이트하게)
   messageRow: {
     flexDirection: 'row',
-    paddingVertical: 12,
+    paddingVertical: 10, // 12 → 10 (타이트하게)
     paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
   },
@@ -388,29 +356,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB', // 읽지않음 배경
   },
   
-  // 프로필
+  // 아바타 (작게)
   avatarContainer: {
     position: 'relative',
     marginRight: 12,
   },
   avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 44, // 52 → 44
+    height: 44,
+    borderRadius: 22, // 26 → 22
     justifyContent: 'center',
     alignItems: 'center',
   },
   initial: {
-    fontSize: 18,
+    fontSize: 16, // 18 → 16
     fontWeight: '700',
   },
   onlineBadge: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 12, // 14 → 12
+    height: 12,
+    borderRadius: 6,
     backgroundColor: '#10B981',
     borderWidth: 2,
     borderColor: '#FFFFFF',
@@ -419,16 +387,15 @@ const styles = StyleSheet.create({
   // 메시지 컨텐츠
   messageContent: {
     flex: 1,
-    justifyContent: 'center',
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 3,
+    marginBottom: 3, // 4 → 3
   },
   name: {
-    fontSize: 16,
+    fontSize: 14, // 16 → 14
     fontWeight: '600',
     color: '#191F28',
   },
@@ -444,84 +411,56 @@ const styles = StyleSheet.create({
     marginLeft: -8,
   },
   time: {
-    fontSize: 13,
+    fontSize: 11, // 12 → 11
+    fontWeight: '400',
     color: '#9CA3AF',
   },
   
   bottomRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   message: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 13, // 14 → 13
+    fontWeight: '400',
     color: '#6B7280',
     lineHeight: 18,
   },
   unreadMessage: {
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#191F28',
   },
   
-  // 읽지않음 뱃지
+  // 읽지않음 뱃지 (작게)
   badge: {
     backgroundColor: '#1884FF',
-    minWidth: 22,
-    height: 22,
-    borderRadius: 11,
+    minWidth: 18, // 20 → 18
+    height: 18,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 6,
-    marginLeft: 8,
+    paddingHorizontal: 5, // 6 → 5
+    marginLeft: 6,
   },
   badgeText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 10, // 11 → 10
     fontWeight: '700',
+  },
+  readIcon: {
+    fontSize: 12,
+    color: '#1884FF',
+    marginLeft: 4,
   },
   
   // 구분선
   separator: {
-    height: 0.5,
-    backgroundColor: '#E5E7EB',
-    marginLeft: 80, // 프로필 너비만큼
+    height: 1,
+    backgroundColor: '#F3F4F6', // 구분선 색상 변경
+    marginHorizontal: 16, // 좌우 여백 추가
   },
   
-  // 하단 네비게이션
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 0.5,
-    borderTopColor: '#E5E7EB',
-    paddingBottom: 20,
-    paddingTop: 8,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  navItemActive: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  navLabel: {
-    fontSize: 11,
-    color: '#9CA3AF',
-    marginTop: 4,
-  },
-  navLabelActive: {
-    fontSize: 11,
-    color: '#1884FF',
-    marginTop: 4,
-    fontWeight: '600',
-  },
   
   // 빈 상태
   emptyContainer: {

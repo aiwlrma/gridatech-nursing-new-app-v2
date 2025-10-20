@@ -29,8 +29,8 @@ export const ClassBlock: React.FC<ClassBlockProps> = ({ schedule, onPress }) => 
   const startMinutes = timeToMinutes(schedule.startTime);
   const endMinutes = timeToMinutes(schedule.endTime);
   const startHour = 9; // 09:00부터 시작
-  const top = (startMinutes - startHour * 60) * (60 / 60); // 1분 = 1px
-  const height = (endMinutes - startMinutes) * (60 / 60); // 1분 = 1px
+  const top = (startMinutes - startHour * 60) * (60 / 60);
+  const height = (endMinutes - startMinutes) * (60 / 60);
 
   return (
     <TouchableOpacity
@@ -41,7 +41,7 @@ export const ClassBlock: React.FC<ClassBlockProps> = ({ schedule, onPress }) => 
           height,
           backgroundColor: color.bg,
           borderLeftColor: color.border,
-        },
+        }
       ]}
       onPress={() => onPress?.(schedule)}
       activeOpacity={0.8}

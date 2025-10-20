@@ -64,6 +64,22 @@ const sampleNotices: Notice[] = [
     views: 45,
     isNew: false,
   },
+  {
+    id: '7',
+    category: '실습',
+    title: '간호학과 실습복 착용 규정 안내',
+    date: '2025.01.09',
+    views: 78,
+    isNew: true,
+  },
+  {
+    id: '8',
+    category: '시험',
+    title: '기초간호학 이론시험 일정 공지',
+    date: '2025.01.08',
+    views: 92,
+    isNew: false,
+  },
 ];
 
 const importantNotice: Notice = {
@@ -110,6 +126,7 @@ export const NoticeScreen: React.FC<NoticeScreenProps> = ({ onBack }) => {
     // 필터 모달 열기 로직
     console.log('Filter pressed');
   };
+
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -180,15 +197,16 @@ export const NoticeScreen: React.FC<NoticeScreenProps> = ({ onBack }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAFAFA',
   },
+  
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 16,
+    paddingBottom: 12,
     backgroundColor: '#FFFFFF',
   },
   headerButton: {
@@ -207,12 +225,12 @@ const styles = StyleSheet.create({
     }),
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 100, // 하단 네비게이션 바 높이만큼 여백 추가
   },
   separator: {
-    height: 0.5,
-    backgroundColor: '#E5E7EB',
-    marginLeft: 68, // 아이콘 너비만큼
+    height: 1, // 구분선 두께 증가
+    backgroundColor: '#F3F4F6', // 구분선 색상 변경
+    marginHorizontal: 16, // 좌우 여백 추가
   },
   emptyContainer: {
     flex: 1,

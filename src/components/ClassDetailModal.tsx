@@ -19,6 +19,7 @@ interface ClassDetailModalProps {
   onMapPress?: (schedule: ClassSchedule) => void;
   onMemoPress?: (schedule: ClassSchedule) => void;
   onNotificationPress?: (schedule: ClassSchedule) => void;
+  onDelete?: () => void;
 }
 
 // 수업 블록 색상 정의
@@ -37,6 +38,7 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
   onMapPress,
   onMemoPress,
   onNotificationPress,
+  onDelete,
 }) => {
   if (!schedule) return null;
 
@@ -61,12 +63,12 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      transparent
+      animationType="fade"
+      transparent={true}
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <View style={styles.modalContainer}>
           {/* 헤더 */}
           <View style={styles.modalHeader}>
             <View style={[styles.colorBar, { backgroundColor: color.border }]} />
@@ -124,6 +126,11 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
                   <Text style={styles.actionIcon}>🔔</Text>
                   <Text style={styles.actionText}>알림 설정</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.actionBtn, styles.deleteBtn]} onPress={onDelete}>
+                  <Text style={styles.actionIcon}>🗑️</Text>
+                  <Text style={[styles.actionText, styles.deleteText]}>삭제</Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -166,13 +173,24 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    zIndex: 1000,
+    elevation: 1000,
   },
-  modalContent: {
+  modalContainer: {
     backgroundColor: COLORS.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '80%',
+    borderRadius: 20,
+    maxHeight: '90%',
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 1001,
+    zIndex: 1001,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -359,6 +377,13 @@ const styles = StyleSheet.create({
       ios: 'Pretendard-Bold',
       android: 'Pretendard-Bold',
     }),
+  },
+  deleteBtn: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+  },
+  deleteText: {
+    color: '#DC2626',
   },
 });
 

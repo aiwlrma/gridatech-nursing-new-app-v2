@@ -10,7 +10,9 @@ html, body {
 /* React Native Web 컨테이너 */
 #root {
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* ScrollView 컴포넌트 개선 */
@@ -64,4 +66,26 @@ html, body {
 [data-scrollview] {
   will-change: scroll-position;
   transform: translateZ(0);
+}
+
+/* iOS 시뮬레이터 스크롤 개선 */
+.ios-simulator #root {
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+}
+
+/* iOS 시뮬레이터 내부 스크롤 개선 */
+.simulator-screen {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 터치 디바이스에서 iOS 시뮬레이터 스크롤 개선 */
+@media (hover: none) and (pointer: coarse) {
+  .ios-simulator #root {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
 }

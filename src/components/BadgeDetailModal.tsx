@@ -139,7 +139,7 @@ export const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({
         style={styles.startBtn}
         onPress={() => onStartPractice(badge)}
       >
-        <Text style={styles.startBtnText}>🥽 VR 실습 시작하기</Text>
+        <Text style={styles.startBtnText}>VR 실습 시작하기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -210,35 +210,53 @@ export const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
+      animationType="fade"
+      transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.container}>
-        {/* 헤더 */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeIcon}>✕</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          {/* 헤더 */}
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Text style={styles.closeIcon}>✕</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* 콘텐츠 */}
-        <ScrollView 
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {renderContent()}
-        </ScrollView>
+          {/* 콘텐츠 */}
+          <ScrollView 
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {renderContent()}
+          </ScrollView>
+        </View>
       </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    maxHeight: '90%',
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
   },
   
   // 헤더
@@ -246,7 +264,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     padding: 20,
-    paddingTop: 60,
+    paddingBottom: 10,
   },
   
   closeButton: {
@@ -277,27 +295,28 @@ const styles = StyleSheet.create({
   modalContent: {
     alignItems: 'center',
     paddingHorizontal: 24,
+    paddingBottom: 20,
   },
   
   // 뱃지
   lockedBadge: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#F3F4F6',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
     opacity: 0.6,
   },
   
   activeBadge: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -306,42 +325,42 @@ const styles = StyleSheet.create({
   },
   
   completedBadge: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#E5E7EB',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   
   lockIcon: {
-    fontSize: 48,
+    fontSize: 32,
   },
   
   badgeIcon: {
-    fontSize: 48,
+    fontSize: 32,
   },
   
   checkIcon: {
-    fontSize: 48,
+    fontSize: 32,
     color: '#10B981',
   },
   
   // 텍스트
   modalTitle: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '800',
     color: '#191F28',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   
   modalSub: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#6B7280',
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 20,
   },
   
   // 점수 섹션

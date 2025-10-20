@@ -71,6 +71,46 @@ export interface Reservation {
   description?: string;
 }
 
+// 새로운 예약 시스템 타입
+export type BookingStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+
+export interface Booking {
+  id: string;
+  studentId: string;
+  professorId: string;
+  date: string; // "2025-10-21"
+  startTime: string; // "14:00"
+  endTime: string; // "15:00"
+  title: string; // "기초 간호 실습"
+  location?: string; // "실습실 A동 302호"
+  memo?: string;
+  status: BookingStatus;
+  rejectionReason?: string;
+  createdAt: string;
+  updatedAt: string;
+  day: number; // 0-4 (월-금)
+}
+
+export interface Professor {
+  id: string;
+  name: string;
+  department: string;
+  email?: string;
+  avatar?: string;
+}
+
+export interface ProfessorSchedule {
+  id: string;
+  professorId: string;
+  type: 'class' | 'meeting' | 'blocked'; // 수업/회의/차단
+  date: string;
+  startTime: string;
+  endTime: string;
+  title: string;
+  location?: string;
+  day: number; // 0-4 (월-금)
+}
+
 // VR 실습 예약 타입
 export interface VRReservation {
   id: number;
@@ -107,6 +147,20 @@ export interface ClassSchedule {
   professor: string;
   location: string;
   colorIndex: number; // 0-4 (색상 인덱스)
+}
+
+// 새로운 일정 타입 (개선된 버전)
+export interface Schedule {
+  id: string;
+  title: string; // 수업명
+  professor: string; // 교수명
+  location: string; // 장소
+  day: 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'; // 요일
+  startTime: string; // 시작 시간 (예: "12:00")
+  endTime: string; // 종료 시간 (예: "13:00")
+  color: string; // 블록 색상 (예: "#EF4444")
+  week: number; // 주차 (1-12)
+  createdAt: string; // 생성 시간
 }
 
 export interface WeekData {

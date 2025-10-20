@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 import { NavigationProps, VRReservation } from '../types';
+import { SvgIcon } from '../components/SvgIcon';
 
 const TodayReservationsScreen: React.FC<NavigationProps> = ({ navigation }) => {
   // 오늘의 예약 데이터
@@ -69,7 +70,9 @@ const TodayReservationsScreen: React.FC<NavigationProps> = ({ navigation }) => {
               {/* 내용 */}
               <View style={styles.content}>
                 <View style={styles.titleRow}>
-                  <Text style={styles.icon}>🥽</Text>
+                  <View style={styles.iconContainer}>
+                    <SvgIcon name="vrGoggle" size={20} color="#6B7280" />
+                  </View>
                   <Text style={styles.cardTitle}>{item.title}</Text>
                 </View>
                 
@@ -80,7 +83,9 @@ const TodayReservationsScreen: React.FC<NavigationProps> = ({ navigation }) => {
                 </View>
                 
                 <View style={styles.locationRow}>
-                  <Text style={styles.deviceIcon}>🎮</Text>
+                  <View style={styles.iconContainer}>
+                    <SvgIcon name="gameController" size={16} color="#6B7280" />
+                  </View>
                   <Text style={styles.location}>{item.booth}</Text>
                 </View>
               </View>
@@ -175,6 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,
+    gap: 8,
   },
   
   icon: {
@@ -214,6 +220,12 @@ const styles = StyleSheet.create({
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  
+  iconContainer: {
+    marginRight: 8,
+    paddingLeft: 4,
   },
   
   deviceIcon: {

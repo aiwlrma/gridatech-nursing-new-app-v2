@@ -108,18 +108,6 @@ export const Input: React.FC<InputProps> = ({
           </TouchableOpacity>
         )}
         
-        {secureTextEntry && !rightIcon && (
-          <TouchableOpacity
-            style={styles.eyeIcon}
-            onPress={togglePasswordVisibility}
-          >
-            <SvgIcon
-              name={isPasswordVisible ? 'eyeOff' : 'eye'}
-              size={20}
-              color={COLORS.textSecondary}
-            />
-          </TouchableOpacity>
-        )}
       </View>
       
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -176,6 +164,9 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     padding: SIZES.spacing.xs,
+    paddingRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   focused: {
     borderColor: COLORS.primary,

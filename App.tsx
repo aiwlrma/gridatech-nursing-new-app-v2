@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { View } from 'react-native';
+import { BottomNavigation } from './src/components/BottomNavigation';
+import { TimetableProvider } from './src/contexts/TimetableContext';
 import { SmartHomeScreen } from './src/screens/SmartHomeScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { ReservationManagementScreen } from './src/screens/ReservationManagementScreen';
+import { BookingManagementScreen } from './src/screens/BookingManagementScreen';
+import { BookingTab } from './src/components/BookingTabNavigation';
 import { TimetableScreen } from './src/screens/TimetableScreen';
-import { TossGradeScreen } from './src/screens/TossGradeScreen';
 import { AddReservationScreen } from './src/screens/AddReservationScreen';
 import { AllBadgesScreen } from './src/screens/AllBadgesScreen';
 import { MessageScreen } from './src/screens/MessageScreen';
@@ -12,12 +16,15 @@ import { ProfileScreen } from './src/screens/ProfileScreen';
 import { NursingBadgesScreen } from './src/screens/NursingBadgesScreen';
 import TodayReservationsScreen from './src/screens/TodayReservationsScreen';
 import { NoticeScreen } from './src/screens/NoticeScreen';
+import { LearningReportScreen } from './src/screens/LearningReportScreen';
+import { BookingScreen } from './src/screens/BookingScreen';
 
-type Screen = 'home' | 'reservationManagement' | 'timetable' | 'grade' | 'addReservation' | 'badges' | 'message' | 'profile' | 'nursingBadges' | 'todayReservations' | 'notice';
+type Screen = 'home' | 'messages' | 'badges' | 'report' | 'reservationManagement' | 'timetable' | 'grade' | 'addReservation' | 'nursingBadges' | 'todayReservations' | 'notice' | 'learningReport' | 'booking';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+  const [activeBookingTab, setActiveBookingTab] = useState<BookingTab>('myBookings');
   const [reservations, setReservations] = useState([
     {
       id: 1,
@@ -46,6 +53,7 @@ const App = () => {
   };
 
   const handleNavigateToTimetable = () => {
+    console.log('시간표로 이동 시도');
     setCurrentScreen('timetable');
   };
 
@@ -58,20 +66,17 @@ const App = () => {
   };
 
   const handleNavigateToBadges = () => {
-    setCurrentScreen('badges');
+    setCurrentScreen('learningReport');
   };
 
   const handleNavigateToMessage = () => {
-    setCurrentScreen('message');
+    setCurrentScreen('messages');
   };
 
   const handleNavigateToProfile = () => {
-    setCurrentScreen('profile');
+    setCurrentScreen('home'); // 프로필은 홈 화면에서 처리
   };
 
-  const handleNavigateToNursingBadges = () => {
-    setCurrentScreen('nursingBadges');
-  };
 
   const handleNavigateToTodayReservations = () => {
     setCurrentScreen('todayReservations');
@@ -105,61 +110,124 @@ const App = () => {
     setCurrentScreen('reservationManagement');
   };
 
-  const renderContent = () => {
+  const renderMainContent = () => {
     if (!isLoggedIn) {
       return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
     }
 
-    // 현재 화면에 따라 다른 컴포넌트 렌더링
+    // 메인 탭 화면들
     switch (currentScreen) {
-      case 'reservationManagement':
-        return <ReservationManagementScreen 
-          onBack={handleBackToHome} 
-          onNavigateToAddReservation={handleNavigateToAddReservation}
-          reservations={reservations}
-        />;
+      case 'messages':
+        return <MessageScreen onBack={handleBackToHome} />;
+      case 'badges':
+        return <LearningReportScreen onBack={handleBackToHome} />;
+      case 'report':
+        return <LearningReportScreen onBack={handleBackToHome} />;
       case 'timetable':
         return <TimetableScreen onBack={handleBackToHome} />;
-      case 'grade':
-        return <TossGradeScreen onBack={handleBackToHome} />;
-      case 'addReservation':
-        return <AddReservationScreen 
-          onBack={handleBackToHome} 
-          onSave={handleAddReservation}
-        />;
-      case 'badges':
-        return <AllBadgesScreen onBack={handleBackToHome} />;
-      case 'message':
-        return <MessageScreen onBack={handleBackToHome} />;
-      case 'profile':
-        return <ProfileScreen onBack={handleBackToHome} />;
-      case 'nursingBadges':
-        return <NursingBadgesScreen onBack={handleBackToHome} />;
-      case 'todayReservations':
-        return <TodayReservationsScreen navigation={{ goBack: handleBackToHome }} route={{}} />;
-      case 'notice':
-        return <NoticeScreen onBack={handleBackToHome} />;
+      case 'home':
       default:
         return (
-          <SmartHomeScreen 
-            onNavigateToReservationManagement={handleNavigateToReservationManagement}
+          <SmartHomeScreen
             onNavigateToTimetable={handleNavigateToTimetable}
-            onNavigateToGrade={handleNavigateToGrade}
-            onNavigateToAddReservation={handleNavigateToAddReservation}
-            onNavigateToBadges={handleNavigateToBadges}
+            onNavigateToGrades={handleNavigateToGrade}
+            onNavigateToReservationManagement={handleNavigateToReservationManagement}
             onNavigateToMessage={handleNavigateToMessage}
-            onNavigateToProfile={handleNavigateToProfile}
-            onNavigateToNursingBadges={handleNavigateToNursingBadges}
-            onNavigateToTodayReservations={handleNavigateToTodayReservations}
             onNavigateToNotice={handleNavigateToNotice}
           />
         );
     }
   };
 
+  const renderModalContent = () => {
+    console.log('renderModalContent 호출됨, currentScreen:', currentScreen);
+    // 모달/서브 화면들
+    switch (currentScreen) {
+      case 'reservationManagement':
+        return <BookingManagementScreen 
+          onBack={handleBackToHome}
+          hideBottomNavigation={shouldHideBottomNavigation}
+          onActiveTabChange={setActiveBookingTab}
+        />;
+      case 'grade':
+        return <NursingBadgesScreen onBack={handleBackToHome} />;
+      case 'addReservation':
+        return <AddReservationScreen 
+          onBack={handleBackToHome} 
+          onSave={handleAddReservation}
+        />;
+      case 'nursingBadges':
+        return <NursingBadgesScreen onBack={handleBackToHome} />;
+      case 'todayReservations':
+        return <TodayReservationsScreen navigation={{ goBack: handleBackToHome }} route={{}} />;
+      case 'notice':
+        return <NoticeScreen onBack={handleBackToHome} />;
+      case 'learningReport':
+        return <LearningReportScreen onBack={handleBackToHome} />;
+      case 'booking':
+        return <BookingScreen onBack={handleBackToHome} />;
+      default:
+        return null;
+    }
+  };
+
+  const isModalScreen = [
+    'reservationManagement', 'grade', 'addReservation', 
+    'nursingBadges', 'todayReservations', 'notice', 'learningReport', 'booking'
+  ].includes(currentScreen);
+  
+  // 예약 관리 화면에서는 하단 네비게이션 숨기기
+  const shouldHideBottomNavigation = currentScreen === 'reservationManagement';
+  
+  console.log('isModalScreen:', isModalScreen, 'currentScreen:', currentScreen);
+
+  const handleTabPress = (tabId: string) => {
+    console.log('탭 클릭:', tabId);
+    switch (tabId) {
+      case 'home':
+        setCurrentScreen('home');
+        break;
+      case 'messages':
+        setCurrentScreen('messages');
+        break;
+      case 'notice':
+        setCurrentScreen('notice');
+        break;
+      case 'reservationManagement':
+        setCurrentScreen('reservationManagement');
+        break;
+      default:
+        setCurrentScreen(tabId as Screen);
+    }
+  };
+
+  // 표 테스트 함수
+  const testTimetable = () => {
+    console.log('시간표 테스트');
+    setCurrentScreen('timetable');
+  };
+
+  console.log('App 렌더링:', { isLoggedIn, currentScreen, isModalScreen });
+
   return (
     <SafeAreaProvider>
-      {renderContent()}
+      <TimetableProvider>
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
+            {isModalScreen ? (
+              renderModalContent()
+            ) : (
+              renderMainContent()
+            )}
+          </View>
+          {isLoggedIn && !shouldHideBottomNavigation && (
+            <BottomNavigation
+              activeTab={currentScreen}
+              onTabPress={handleTabPress}
+            />
+          )}
+        </View>
+      </TimetableProvider>
     </SafeAreaProvider>
   );
 };

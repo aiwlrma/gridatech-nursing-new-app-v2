@@ -54,28 +54,29 @@ export const NoticeFilterTabs: React.FC<NoticeFilterTabsProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 8, // 여백 감소
+    paddingHorizontal: 16, // 여백 감소
   },
   scrollContent: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 0,
   },
   tab: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12, // 패딩 감소
     paddingVertical: 8,
-    borderRadius: 18,
-    backgroundColor: '#F0F7FF',
-    marginRight: 8,
+    marginRight: 16, // 간격 증가
+    borderBottomWidth: 2, // 밑줄 추가
+    borderBottomColor: 'transparent',
   },
   activeTab: {
-    backgroundColor: '#1884FF',
+    borderBottomColor: '#1884FF', // 파란 밑줄
   },
   tabText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1976D2',
+    fontWeight: '500',
+    color: '#6B7280',
   },
   activeTabText: {
-    color: '#FFFFFF',
+    color: '#1884FF', // 파란 텍스트
+    fontWeight: '600',
   },
 });

@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { SvgIcon } from './SvgIcon';
 import { Notice } from '../types';
 
 interface NoticeCardProps {
@@ -13,79 +12,22 @@ interface NoticeCardProps {
   onPress: (notice: Notice) => void;
 }
 
-const getCategoryIcon = (category: Notice['category']) => {
-  switch (category) {
-    case '실습':
-      return 'clipboard';
-    case '시험':
-      return 'award';
-    case '일반':
-      return 'notifications';
-    default:
-      return 'notifications';
-  }
-};
-
-const getCategoryIconColor = (category: Notice['category']) => {
-  switch (category) {
-    case '실습':
-      return '#1884FF';
-    case '시험':
-      return '#F59E0B';
-    case '일반':
-      return '#10B981';
-    default:
-      return '#10B981';
-  }
-};
-
-const getCategoryIconBg = (category: Notice['category']) => {
-  switch (category) {
-    case '실습':
-      return '#1884FF15';
-    case '시험':
-      return '#F59E0B15';
-    case '일반':
-      return '#10B98115';
-    default:
-      return '#10B98115';
-  }
-};
-
-const getCategoryChipBg = (category: Notice['category']) => {
-  switch (category) {
-    case '실습':
-      return '#1884FF15';
-    case '시험':
-      return '#F59E0B15';
-    case '일반':
-      return '#10B98115';
-    default:
-      return '#10B98115';
-  }
-};
-
 export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onPress }) => {
-  const iconName = getCategoryIcon(notice.category);
-  const iconColor = getCategoryIconColor(notice.category);
-  const iconBg = getCategoryIconBg(notice.category);
-  const chipBg = getCategoryChipBg(notice.category);
-
   return (
     <TouchableOpacity
       style={styles.row}
       onPress={() => onPress(notice)}
       activeOpacity={0.6}
     >
-      {/* 작은 아이콘 */}
-      <View style={[styles.miniIcon, { backgroundColor: iconBg }]}>
-        <SvgIcon name={iconName as any} color={iconColor} size={18} />
-      </View>
-
       {/* 컨텐츠 */}
       <View style={styles.content}>
-        {/* 제목 + NEW 뱃지 */}
+        {/* 제목 + 배지 */}
         <View style={styles.titleRow}>
+          {notice.isImportant && (
+            <View style={styles.importantBadge}>
+              <Text style={styles.importantText}>중요</Text>
+            </View>
+          )}
           <Text style={styles.title} numberOfLines={1}>
             {notice.title}
           </Text>
@@ -98,39 +40,21 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onPress }) => {
 
         {/* 카테고리 + 날짜 */}
         <View style={styles.metaRow}>
-          <View style={[styles.categoryChip, { backgroundColor: chipBg }]}>
-            <Text style={[styles.categoryText, { color: iconColor }]}>
-              {notice.category}
-            </Text>
-          </View>
+          <Text style={styles.categoryText}>{notice.category}</Text>
+          <Text style={styles.separator}>·</Text>
           <Text style={styles.date}>{notice.date}</Text>
         </View>
       </View>
-
-      {/* 화살표 */}
-      <SvgIcon name="chevronRight" color="#D1D5DB" size={20} />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  // 공지사항 행 (카카오뱅크 스타일)
+  // 공지사항 행 (에브리타임 스타일)
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: 12, // 여백 감소
+    paddingHorizontal: 16, // 여백 감소
     backgroundColor: '#FFFFFF',
-  },
-  
-  // 작은 아이콘 (36px)
-  miniIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
   },
   
   // 컨텐츠
@@ -140,28 +64,42 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 4, // 간격 감소
   },
   title: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14, // 폰트 크기 감소
+    fontWeight: '500',
     color: '#191F28',
-    lineHeight: 20,
+    lineHeight: 18,
   },
   
-  // NEW 뱃지 (작게!)
+  // 중요 배지 (축소)
+  importantBadge: {
+    backgroundColor: '#1884FF',
+    paddingHorizontal: 4, // 패딩 축소
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  importantText: {
+    fontSize: 9, // 폰트 크기 축소
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  
+  // NEW 뱃지 (축소)
   newBadge: {
     backgroundColor: '#EF4444',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 14, // 크기 축소
+    height: 14,
+    borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 6,
   },
   newText: {
-    fontSize: 10,
+    fontSize: 9, // 폰트 크기 축소
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -170,19 +108,18 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  categoryChip: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
   },
   categoryText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 12, // 폰트 크기 감소
+    color: '#6B7280',
+  },
+  separator: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginHorizontal: 4,
   },
   date: {
-    fontSize: 13,
-    color: '#9CA3AF',
+    fontSize: 12, // 폰트 크기 감소
+    color: '#6B7280',
   },
 });

@@ -15,14 +15,12 @@ interface AppointmentCardProps {
   appointments: Appointment[];
   upcomingAppointments?: Appointment[];
   onViewAll?: () => void;
-  onAddReservation?: () => void;
 }
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointments = [],
   upcomingAppointments = [],
   onViewAll,
-  onAddReservation,
 }) => {
   // 안전한 배열 처리
   const safeAppointments = Array.isArray(appointments) ? appointments : [];
@@ -88,13 +86,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
       </View>
 
 
-      {/* 새 예약 추가 버튼 (SPOT 스타일) */}
-      <TouchableOpacity style={styles.primaryButton} onPress={onAddReservation}>
-        <View style={styles.buttonIconWrapper}>
-          <SvgIcon name="plus" size={24} color="#FFFFFF" />
-        </View>
-        <Text style={styles.primaryButtonText}>예약 추가하기</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -194,30 +185,5 @@ const styles = StyleSheet.create({
   emptySub: {
     fontSize: 14,
     color: '#9CA3AF',
-  },
-  // Primary 버튼 (브랜딩 색상)
-  primaryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1884FF',
-    height: 64,
-    borderRadius: 20,
-    gap: 12,
-  },
-  
-  buttonIconWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  
-  primaryButtonText: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: '700',
   },
 });

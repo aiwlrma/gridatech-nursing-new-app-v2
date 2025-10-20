@@ -42,16 +42,32 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
   const days = ['월', '화', '수', '목', '금'];
 
   useEffect(() => {
-    if (visible && selectedTime) {
-      setStartTime(selectedTime);
-      // 기본적으로 1시간 수업으로 설정
-      const [hour, minute] = selectedTime.split(':');
-      const endHour = parseInt(hour) + 1;
-      setEndTime(`${endHour.toString().padStart(2, '0')}:${minute}`);
+    if (visible) {
+      // 모달이 열릴 때마다 폼 초기화
+      setName('');
+      setProfessor('');
+      setLocation('');
+      
+      if (selectedTime) {
+        setStartTime(selectedTime);
+        // 기본적으로 1시간 수업으로 설정
+        const [hour, minute] = selectedTime.split(':');
+        const endHour = parseInt(hour) + 1;
+        setEndTime(`${endHour.toString().padStart(2, '0')}:${minute}`);
+      } else {
+        setStartTime('13:00');
+        setEndTime('14:00');
+      }
     }
   }, [visible, selectedTime]);
 
   const handleSave = () => {
+    console.log('📝 AddScheduleModal handleSave 호출됨');
+    console.log('입력된 데이터:', { name, professor, location, startTime, endTime, day: selectedDay });
+    console.log('name 값:', name, '길이:', name.length);
+    console.log('professor 값:', professor, '길이:', professor.length);
+    console.log('location 값:', location, '길이:', location.length);
+    
     if (!name.trim()) {
       Alert.alert('입력 오류', '수업명을 입력해주세요.');
       return;
@@ -67,14 +83,18 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
       return;
     }
 
-    onSave({
+    const scheduleData = {
       name: name.trim(),
       professor: professor.trim(),
       location: location.trim(),
       startTime,
       endTime,
       day: selectedDay,
-    });
+    };
+    
+    console.log('📤 onSave 호출 전:', scheduleData);
+    onSave(scheduleData);
+    console.log('📤 onSave 호출 완료');
 
     // 폼 초기화
     setName('');
@@ -98,12 +118,12 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      transparent
+      animationType="fade"
+      transparent={true}
       onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <View style={styles.modalContainer}>
           {/* 헤더 */}
           <View style={styles.header}>
             <Text style={styles.title}>일정 추가</Text>
@@ -132,7 +152,10 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
                 style={styles.input}
                 placeholder="예: 기초간호학"
                 value={name}
-                onChangeText={setName}
+                onChangeText={(text) => {
+                  console.log('수업명 입력:', text);
+                  setName(text);
+                }}
                 autoFocus
               />
             </View>
@@ -143,7 +166,10 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
                 style={styles.input}
                 placeholder="예: 김교수"
                 value={professor}
-                onChangeText={setProfessor}
+                onChangeText={(text) => {
+                  console.log('교수명 입력:', text);
+                  setProfessor(text);
+                }}
               />
             </View>
 
@@ -153,7 +179,10 @@ export const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
                 style={styles.input}
                 placeholder="예: A동 302호"
                 value={location}
-                onChangeText={setLocation}
+                onChangeText={(text) => {
+                  console.log('장소 입력:', text);
+                  setLocation(text);
+                }}
               />
             </View>
 
@@ -198,15 +227,25 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    zIndex: 1000,
+    elevation: 1000,
   },
-  modalContent: {
+  modalContainer: {
     backgroundColor: COLORS.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: SIZES.spacing.lg,
-    paddingBottom: 40,
-    maxHeight: '80%',
+    borderRadius: 16,
+    padding: 24,
+    maxHeight: '85%',
+    width: '100%',
+    maxWidth: 380,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 1001,
+    zIndex: 1001,
   },
   header: {
     flexDirection: 'row',

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
-import { COLORS, SIZES } from '../constants';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 interface WeekTabsProps {
   currentWeek: number;
@@ -30,18 +29,18 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity 
-        style={styles.navButton} 
+        style={styles.arrow} 
         onPress={onPreviousWeek}
         activeOpacity={0.7}
       >
-        <Text style={styles.navIcon}>◀</Text>
+        <Text style={styles.arrowText}>‹</Text>
       </TouchableOpacity>
       
       <ScrollView
         ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={styles.scrollContainer}
+        style={styles.scrollView}
         contentContainerStyle={styles.weekContainer}
       >
         {weeks.map((week) => (
@@ -49,7 +48,7 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
             key={week}
             style={[
               styles.weekTab,
-              currentWeek === week && styles.activeWeekTab,
+              currentWeek === week && styles.activeTab,
             ]}
             onPress={() => onWeekChange(week)}
             activeOpacity={0.7}
@@ -57,21 +56,22 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
             <Text
               style={[
                 styles.weekText,
-                currentWeek === week && styles.activeWeekText,
+                currentWeek === week && styles.activeText,
               ]}
             >
               {week}주차
             </Text>
+            {currentWeek === week && <View style={styles.indicator} />}
           </TouchableOpacity>
         ))}
       </ScrollView>
       
       <TouchableOpacity 
-        style={styles.navButton} 
+        style={styles.arrow} 
         onPress={onNextWeek}
         activeOpacity={0.7}
       >
-        <Text style={styles.navIcon}>▶</Text>
+        <Text style={styles.arrowText}>›</Text>
       </TouchableOpacity>
     </View>
   );
@@ -81,68 +81,59 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SIZES.spacing.md,
-    paddingVertical: SIZES.spacing.sm,
-    backgroundColor: COLORS.surface,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: '#F3F4F6',
+    height: 44,
   },
-  navButton: {
-    padding: SIZES.spacing.xs,
-    marginHorizontal: SIZES.spacing.xs,
-    zIndex: 1,
+  
+  arrow: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
-  navIcon: {
-    fontSize: 16,
-    color: COLORS.primary,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-Medium',
-      android: 'Pretendard-Medium',
-    }),
+  
+  arrowText: {
+    fontSize: 20,
+    color: '#6B7280',
   },
-  scrollContainer: {
+  
+  scrollView: {
     flex: 1,
   },
+  
   weekContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SIZES.spacing.sm,
   },
+  
   weekTab: {
-    paddingHorizontal: SIZES.spacing.md,
-    paddingVertical: SIZES.spacing.sm,
-    marginHorizontal: 2,
-    borderRadius: SIZES.borderRadius.md,
-    backgroundColor: 'transparent',
-    minWidth: 70,
-    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    position: 'relative',
   },
-  activeWeekTab: {
-    backgroundColor: COLORS.primary,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+  
+  activeTab: {
+    // 활성 상태
   },
+  
   weekText: {
-    fontSize: SIZES.fontSize.sm,
+    fontSize: 14,
     fontWeight: '500',
-    color: COLORS.textSecondary,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-Medium',
-      android: 'Pretendard-Medium',
-    }),
+    color: '#6B7280',
   },
-  activeWeekText: {
-    color: COLORS.surface,
-    fontWeight: '600',
-    fontFamily: Platform.select({
-      ios: 'Pretendard-SemiBold',
-      android: 'Pretendard-SemiBold',
-    }),
+  
+  activeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1884FF',
+  },
+  
+  indicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: 16,
+    right: 16,
+    height: 2,
+    backgroundColor: '#1884FF',
   },
 });

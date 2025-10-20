@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+  <title>간호학과 앱</title>
+  <link rel="icon" href="/favicon.png" />
+  <link rel="stylesheet" href="/web-scroll-fix.css" />
+  <link rel="stylesheet" href="/mobile-mockup.css" />
+  <style>
+    /* 웹 폰트 로딩 */
+    @font-face {
+      font-family: 'Pretendard';
+      src: url('/assets/fonts/Pretendard-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Pretendard';
+      src: url('/assets/fonts/Pretendard-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Pretendard';
+      src: url('/assets/fonts/Pretendard-Medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+    }
+    
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #root {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+  </style>
+</head>
+      <body>
+        <div class="ios-simulator" id="ios-simulator">
+          <div class="device-selector">
+            <select id="device-selector" onchange="changeDevice(this.value)">
+              <option value="iphone-14-pro">iPhone 14 Pro</option>
+              <option value="iphone-14-pro-max">iPhone 14 Pro Max</option>
+              <option value="iphone-14">iPhone 14</option>
+              <option value="iphone-13-pro">iPhone 13 Pro</option>
+              <option value="iphone-13">iPhone 13</option>
+              <option value="iphone-12-pro">iPhone 12 Pro</option>
+              <option value="iphone-12">iPhone 12</option>
+              <option value="iphone-se">iPhone SE</option>
+              <option value="ipad">iPad</option>
+            </select>
+          </div>
+          <div class="simulator-frame">
+            <div class="simulator-screen">
+              <div id="root"></div>
+            </div>
+          </div>
+        </div>
+        
+        <script>
+          function changeDevice(device) {
+            const simulator = document.getElementById('ios-simulator');
+            // 모든 기기 클래스 제거
+            simulator.className = 'ios-simulator';
+            // 선택된 기기 클래스 추가
+            if (device) {
+              simulator.classList.add(device);
+            }
+          }
+          
+          // 기본값 설정
+          document.addEventListener('DOMContentLoaded', function() {
+            const selector = document.getElementById('device-selector');
+            selector.value = 'iphone-14-pro';
+            changeDevice('iphone-14-pro');
+          });
+        </script>
+      </body>
+</html>

@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
   <title>간호학과 앱</title>
   <link rel="icon" href="/favicon.png" />
   <link rel="stylesheet" href="/web-scroll-fix.css" />
+  <link rel="stylesheet" href="/mobile-mockup.css" />
   <style>
     /* 웹 폰트 로딩 */
     @font-face {
@@ -32,16 +33,29 @@
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f8f9fa;
+      background: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     
     #root {
-      height: 100vh;
-      width: 100vw;
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div class="ios-simulator">
+    <div class="simulator-frame">
+      <div class="simulator-screen">
+        <div id="root"></div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

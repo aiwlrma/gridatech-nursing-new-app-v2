@@ -125,6 +125,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: SIZES.spacing.lg,
+    zIndex: 1000,
+    elevation: 1000,
   },
   modalContent: {
     backgroundColor: COLORS.surface,
@@ -138,7 +140,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 1001,
+    zIndex: 1001,
   },
   header: {
     flexDirection: 'row',

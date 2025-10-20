@@ -24,16 +24,12 @@ export const ImportantNotice: React.FC<ImportantNoticeProps> = ({
         onPress={() => onPress(notice)}
         activeOpacity={0.6}
       >
-        <View style={styles.pinIcon}>
-          <SvgIcon name="pin" color="#F59E0B" size={16} />
-        </View>
         <View style={styles.content}>
           <Text style={styles.title} numberOfLines={1}>
             {notice.title}
           </Text>
           <Text style={styles.date}>{notice.date}</Text>
         </View>
-        <SvgIcon name="chevronRight" color="#D1D5DB" size={20} />
       </TouchableOpacity>
     </View>
   );
@@ -41,30 +37,25 @@ export const ImportantNotice: React.FC<ImportantNoticeProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16, // 여백 감소
+    paddingVertical: 8, // 여백 감소
+    backgroundColor: '#FAFAFA', // 배경색 변경
   },
   pinnedNotice: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF9E6',
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 3,
-    borderLeftColor: '#F59E0B',
-  },
-  pinIcon: {
-    marginRight: 12,
+    backgroundColor: '#FEF3C7', // 노란 배경
+    borderRadius: 8, // 모서리 둥글게
+    padding: 12, // 패딩 감소
+    borderWidth: 1, // 테두리 추가
+    borderColor: '#FDE68A', // 테두리 색상
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 15,
+    fontSize: 14, // 폰트 크기 감소
     fontWeight: '600',
     color: '#191F28',
-    marginBottom: 2,
+    marginBottom: 4, // 마진 증가
   },
   date: {
     fontSize: 12,

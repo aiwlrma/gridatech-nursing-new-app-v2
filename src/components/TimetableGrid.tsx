@@ -1,24 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
-import { ClassBlock } from './ClassBlock';
-import { ClassSchedule } from '../types';
-import { COLORS, SIZES } from '../constants';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Dimensions } from 'react-native';
+import { ClassSchedule, Schedule } from '../types';
 
 interface TimetableGridProps {
   schedules: ClassSchedule[];
+  newSchedules?: Schedule[];
   onClassPress?: (schedule: ClassSchedule) => void;
+  onNewSchedulePress?: (schedule: Schedule) => void;
   onEmptySlotPress?: (day: number, time: string) => void;
 }
 
 export const TimetableGrid: React.FC<TimetableGridProps> = ({
   schedules,
+  newSchedules = [],
   onClassPress,
+  onNewSchedulePress,
   onEmptySlotPress,
 }) => {
+  console.log('TimetableGrid 렌더링됨, schedules:', schedules);
+  console.log('TimetableGrid 렌더링됨, newSchedules:', newSchedules);
+  const { width: screenWidth } = Dimensions.get('window');
   const days = ['월', '화', '수', '목', '금'];
   const timeSlots = [
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
   ];
+
+  // 시간표 최종 크기 조정 - 정확히 5개 요일 표시
+  const isSmallScreen = screenWidth < 400;
+  const HOUR_HEIGHT = 80; // 1시간 = 80px (고정)
+  const cellHeight = HOUR_HEIGHT; // 모든 시간 셀을 80px로 통일
+  const timeColumnWidth = 45; // 시간 컬럼 최소화 (60px → 45px)
+  const dayColumnWidth = 65; // 요일 컬럼 최소화 (100px → 65px)
+  const headerHeight = 50; // 헤더 높이 축소 (60px → 50px)
 
   // 시간을 분으로 변환하는 함수
   const timeToMinutes = (time: string): number => {
@@ -26,29 +39,61 @@ export const TimetableGrid: React.FC<TimetableGridProps> = ({
     return hour * 60 + minute;
   };
 
-  // 위치 계산 (09:00을 기준으로)
-  const getTimePosition = (time: string): number => {
-    const startHour = 9; // 09:00부터 시작
-    const minutes = timeToMinutes(time);
-    return (minutes - startHour * 60) * (60 / 60); // 1분 = 1px
+  // 정확한 블록 위치 계산 (09:00 기준)
+  const getBlockTop = (startTime: string): number => {
+    const startMinutes = timeToMinutes(startTime);
+    const baseMinutes = timeToMinutes('09:00'); // 09:00 = 540분
+    const offsetMinutes = startMinutes - baseMinutes;
+    return (offsetMinutes / 60) * HOUR_HEIGHT;
   };
 
-  // 그리드 높이 계산 (09:00-18:00 = 9시간 = 540px)
-  const gridHeight = 9 * 60; // 540px
+  // 정확한 블록 높이 계산
+  const getBlockHeight = (startTime: string, endTime: string): number => {
+    const startMinutes = timeToMinutes(startTime);
+    const endMinutes = timeToMinutes(endTime);
+    const duration = endMinutes - startMinutes;
+    return (duration / 60) * HOUR_HEIGHT;
+  };
 
-  // 현재 시간 위치 계산
-  const getCurrentTimePosition = (): number => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-    const startHour = 9; // 09:00부터 시작
-    
-    if (currentHour < startHour || currentHour >= 18) {
-      return -1; // 표시하지 않음
+  // 요일별 좌측 위치 계산
+  const getDayPosition = (day: number): number => {
+    return day * dayColumnWidth; // 픽셀 단위로 계산
+  };
+
+  // 수업 블록 높이에 따른 정보 표시 전략 (최종 축소 버전)
+  const shouldShowProfessor = (height: number): boolean => height >= 60;
+  const shouldShowLocation = (height: number): boolean => height >= 90;
+
+  // 텍스트 처리 함수들 (최종 축소 버전)
+  const truncateTitle = (title: string): string => {
+    // 과목명 최대 5글자
+    return title.length > 5 ? title.substring(0, 5) : title;
+  };
+
+  const truncateProfessor = (name: string): string => {
+    // 교수명 1글자 + "..."
+    return name.length > 1 ? name[0] + '...' : name;
+  };
+
+  const abbreviateLocation = (location: string): string => {
+    // 장소 축약: "A동 302호" → "A302"
+    const match = location.match(/([A-Z가-힣]).*?(\d+)/);
+    if (match) {
+      return match[1] + match[2];
     }
     
-    const totalMinutes = (currentHour - startHour) * 60 + currentMinute;
-    return totalMinutes; // 1분 = 1px
+    // "실습실1" → "실1"
+    if (location.includes('실습')) {
+      return location.replace('실습실', '실').substring(0, 4);
+    }
+    
+    return location.substring(0, 4);
+  };
+
+  const formatTime = (time: string): string => {
+    // 시간 축약: "09:00" → "9시"
+    const hour = time.split(':')[0].replace(/^0/, '');
+    return hour + '시';
   };
 
   // 특정 요일과 시간에 수업이 있는지 확인
@@ -59,221 +104,358 @@ export const TimetableGrid: React.FC<TimetableGridProps> = ({
     );
   };
 
+  // 특정 요일의 수업들 가져오기
+  const getClassesForDay = (day: number) => {
+    return schedules.filter(schedule => schedule.day === day);
+  };
+
+  // 특정 요일의 새 일정들 가져오기
+  const getNewSchedulesForDay = (day: number) => {
+    const dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI'];
+    const dayName = dayNames[day];
+    return newSchedules.filter(schedule => schedule.day === dayName);
+  };
+
+
+  // 블록 위치 계산 (상단)
+  const calculateTop = (startTime: string): number => {
+    const [hour, minute] = startTime.split(':').map(Number);
+    const baseHour = 9; // 09:00 시작
+    const hourOffset = (hour - baseHour) * 80;
+    const minuteOffset = (minute / 60) * 80;
+    return hourOffset + minuteOffset;
+  };
+
+  // 블록 높이 계산
+  const calculateHeight = (startTime: string, endTime: string): number => {
+    const startMinutes = timeToMinutes(startTime);
+    const endMinutes = timeToMinutes(endTime);
+    const duration = endMinutes - startMinutes;
+    return (duration / 60) * 80;
+  };
+
   // 빈 칸 클릭 핸들러
   const handleEmptySlotPress = (day: number, time: string) => {
     onEmptySlotPress?.(day, time);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.scrollContainer}>
       <ScrollView 
-        horizontal
-        showsHorizontalScrollIndicator={false}
+        horizontal 
+        showsHorizontalScrollIndicator={true}
         style={styles.horizontalScroll}
+        contentContainerStyle={styles.horizontalScrollContent}
       >
-        <View style={styles.timetableContainer}>
-          {/* 요일 헤더 */}
-          <View style={styles.header}>
-            <View style={styles.timeColumn} />
-            {days.map((day, index) => (
-              <View key={index} style={styles.dayHeader}>
-                <Text style={styles.dayText}>{day}</Text>
-                <Text style={styles.daySubtext}>
-                  {new Date().getDate() + index}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          {/* 시간표 그리드 */}
+        <ScrollView
+          showsVerticalScrollIndicator={true}
+          style={styles.verticalScroll}
+          contentContainerStyle={styles.verticalScrollContent}
+        >
           <View style={styles.timetable}>
-            {/* 시간 컬럼 */}
-            <View style={styles.timeColumn}>
-              {timeSlots.map((time, index) => (
-                <View key={index} style={styles.timeSlot}>
-                  <Text style={styles.timeText}>{time}</Text>
-                </View>
-              ))}
+        {/* 시간 열 */}
+        <View style={[styles.timeColumn, { width: timeColumnWidth }]}>
+          <View style={[styles.dayHeader, { height: headerHeight }]} />
+          {timeSlots.map((time, index) => (
+            <View key={index} style={styles.timeCell}>
+              <Text style={[styles.timeText, { fontSize: isSmallScreen ? 10 : 11 }]}>{time}</Text>
             </View>
+          ))}
+        </View>
 
-            {/* 요일별 컬럼 */}
-            <View style={styles.scheduleGrid}>
-              {days.map((_, dayIndex) => (
-                <View key={dayIndex} style={styles.dayColumn}>
-                  {/* 그리드 라인 */}
-                  {timeSlots.map((_, timeIndex) => (
-                    <View
-                      key={timeIndex}
-                      style={[
-                        styles.gridLine,
-                        { top: timeIndex * 60 }
-                      ]}
-                    />
-                  ))}
-                  
-                  {/* 현재 시간 표시선 */}
-                  <View style={[styles.currentTimeLine, { top: getCurrentTimePosition() }]} />
-                  
-                  {/* 빈 칸들 (클릭 가능) - 미니멀 디자인 */}
-                  {timeSlots.map((time, timeIndex) => {
-                    const hasClass = hasClassAtTime(dayIndex, time);
-                    if (hasClass) return null; // 수업이 있으면 빈 칸 렌더링하지 않음
-                    
-                    return (
-                      <TouchableOpacity
-                        key={`empty-${dayIndex}-${time}`}
-                        style={[
-                          styles.emptySlot,
-                          { top: timeIndex * 60 }
-                        ]}
-                        onPress={() => handleEmptySlotPress(dayIndex, time)}
-                        activeOpacity={0.3}
-                      >
-                        {/* 빈 영역 - 시각적 표시 없음 */}
-                      </TouchableOpacity>
-                    );
-                  })}
-                  
-                  {/* 해당 요일의 수업들 */}
-                  {schedules
-                    .filter(schedule => schedule.day === dayIndex)
-                    .map((schedule) => (
-                      <ClassBlock
-                        key={schedule.id}
-                        schedule={schedule}
-                        onPress={onClassPress}
-                      />
-                    ))}
-                </View>
-              ))}
+        {/* 요일 열들 */}
+        {days.map((day, dayIndex) => (
+          <View key={dayIndex} style={[styles.dayColumn, { width: dayColumnWidth }]}>
+            <View style={[styles.dayHeader, { height: headerHeight }]}>
+              <Text style={[styles.dayText, { fontSize: isSmallScreen ? 12 : 13 }]}>{day}</Text>
+            </View>
+            
+            <View style={[styles.scheduleContainer, { height: HOUR_HEIGHT * 9 }]}>
+              {/* 빈 칸들 (클릭 가능) */}
+              {timeSlots.map((time, timeIndex) => {
+                const hasClass = hasClassAtTime(dayIndex, time);
+                if (hasClass) return null;
+                
+                return (
+                  <TouchableOpacity
+                    key={`empty-${dayIndex}-${time}`}
+                    style={[
+                      styles.emptySlot,
+                      { 
+                        top: timeIndex * HOUR_HEIGHT,
+                        height: HOUR_HEIGHT
+                      }
+                    ]}
+                    onPress={() => handleEmptySlotPress(dayIndex, time)}
+                    activeOpacity={0.3}
+                  />
+                );
+              })}
+              
+               {/* 기존 수업 블록들 */}
+               {getClassesForDay(dayIndex).map((schedule) => {
+                 const blockHeight = getBlockHeight(schedule.startTime, schedule.endTime);
+                 return (
+                   <TouchableOpacity
+                     key={schedule.id}
+                     style={[
+                       styles.classBlock,
+                       {
+                         top: getBlockTop(schedule.startTime),
+                         height: blockHeight,
+                         left: 2,
+                         width: dayColumnWidth - 4,
+                         backgroundColor: getClassColor(schedule.colorIndex),
+                       }
+                     ]}
+                     onPress={() => onClassPress?.(schedule)}
+                     activeOpacity={0.85}
+                   >
+                     <Text style={styles.scheduleTitle} numberOfLines={2}>
+                       {schedule.name}
+                     </Text>
+                     <Text style={styles.scheduleTime} numberOfLines={1}>
+                       {schedule.startTime}
+                     </Text>
+                   </TouchableOpacity>
+                 );
+               })}
+               
+               {/* 새로운 일정 블록들 */}
+               {getNewSchedulesForDay(dayIndex).map((schedule) => {
+                 const blockHeight = calculateHeight(schedule.startTime, schedule.endTime);
+                 return (
+                   <TouchableOpacity
+                     key={schedule.id}
+                     style={[
+                       styles.scheduleBlock,
+                       {
+                         top: calculateTop(schedule.startTime),
+                         height: Math.max(blockHeight, 60),
+                         left: 2,
+                         width: dayColumnWidth - 4,
+                         backgroundColor: schedule.color,
+                         borderWidth: 2,
+                         borderColor: 'rgba(0,0,0,0.1)',
+                       }
+                     ]}
+                     onPress={() => onNewSchedulePress?.(schedule)}
+                     activeOpacity={0.85}
+                   >
+                     <Text style={styles.scheduleTitle} numberOfLines={2}>
+                       {schedule.title}
+                     </Text>
+                     <Text style={styles.scheduleTime} numberOfLines={1}>
+                       {schedule.startTime}
+                     </Text>
+                     {blockHeight >= 60 && (
+                       <Text style={styles.scheduleProfessor} numberOfLines={1}>
+                         {schedule.professor}
+                       </Text>
+                     )}
+                     {blockHeight >= 80 && (
+                       <Text style={styles.scheduleLocation} numberOfLines={1}>
+                         {schedule.location}
+                       </Text>
+                     )}
+                   </TouchableOpacity>
+                 );
+               })}
             </View>
           </View>
-        </View>
+        ))}
+          </View>
+        </ScrollView>
       </ScrollView>
     </View>
   );
 };
 
+// 구글 캘린더 스타일 색상 팔레트 (진한 색상)
+const getClassColor = (colorIndex: number): string => {
+  const colors = [
+    '#EF4444', // 빨강
+    '#3B82F6', // 파랑
+    '#F59E0B', // 주황
+    '#10B981', // 초록
+    '#8B5CF6', // 보라
+    '#EC4899', // 핑크
+    '#14B8A6', // 청록
+    '#6B7280', // 회색
+  ];
+  return colors[colorIndex % colors.length];
+};
+
+// 시간 표시 형식 변경 (한국어)
+const formatTimeKorean = (time: string): string => {
+  const [hour, minute] = time.split(':').map(Number);
+  const period = hour < 12 ? '오전' : '오후';
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+  return `${period} ${displayHour}:${minute.toString().padStart(2, '0')}`;
+};
+
+// 텍스트 표시 함수들 (줄임표 최소화)
+const displayTitle = (title: string): string => {
+  // 7글자까지 표시 (기존 5글자에서 확장)
+  return title.length > 7 ? title.substring(0, 7) + '...' : title;
+};
+
+const displayProfessor = (name: string): string => {
+  // 전체 표시 (기존: 1글자 + ...)
+  return name;
+};
+
+const abbreviateLocation = (location: string): string => {
+  // 장소 축약: "A동 302호" → "A302"
+  const match = location.match(/([A-Z가-힣]).*?(\d+)/);
+  if (match) {
+    return match[1] + match[2];
+  }
+  
+  // "실습실1" → "실1"
+  if (location.includes('실습')) {
+    return location.replace('실습실', '실').substring(0, 4);
+  }
+  
+  return location.substring(0, 4);
+};
+
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#FAFAFA',
   },
   horizontalScroll: {
     flex: 1,
   },
-  timetableContainer: {
-    minWidth: 400,
+  horizontalScrollContent: {
+    flexGrow: 1,
   },
-  header: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  timeColumn: {
-    width: 60,
-    backgroundColor: COLORS.surface,
-    borderRightWidth: 1,
-    borderRightColor: COLORS.border,
-  },
-  dayHeader: {
+  verticalScroll: {
     flex: 1,
-    paddingVertical: SIZES.spacing.md,
-    alignItems: 'center',
-    borderRightWidth: 1,
-    borderRightColor: COLORS.border,
-    backgroundColor: COLORS.surface,
   },
-  dayText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: 2,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-Bold',
-      android: 'Pretendard-Bold',
-    }),
-  },
-  daySubtext: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: COLORS.textSecondary,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-Medium',
-      android: 'Pretendard-Medium',
-    }),
+  verticalScrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   timetable: {
     flexDirection: 'row',
-    height: 540, // 9시간 * 60px
-    backgroundColor: COLORS.surface,
+    minWidth: 370,
+    minHeight: 600,
   },
-  timeSlot: {
+  timeColumn: {
+    width: 50,
+    backgroundColor: '#F9FAFB',
+    borderRightWidth: 1,
+    borderRightColor: '#E5E7EB',
+  },
+  timeCell: {
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.background,
+    borderBottomColor: '#F3F4F6',
   },
   timeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-SemiBold',
-      android: 'Pretendard-SemiBold',
-    }),
-  },
-  scheduleGrid: {
-    flex: 1,
-    flexDirection: 'row',
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#9CA3AF',
   },
   dayColumn: {
     flex: 1,
-    position: 'relative',
     borderRightWidth: 1,
-    borderRightColor: COLORS.border,
-    backgroundColor: COLORS.surface,
+    borderRightColor: '#F3F4F6',
   },
-  gridLine: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: COLORS.border,
+  dayHeader: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
-  currentTimeLine: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 2,
-    backgroundColor: COLORS.primary,
-    zIndex: 10,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 3,
+  dayText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#191F28',
+  },
+  scheduleContainer: {
+    position: 'relative',
   },
   emptySlot: {
     position: 'absolute',
     left: 0,
     right: 0,
-    height: 60,
-    backgroundColor: 'transparent',
-    // 시각적 표시 없이 투명한 클릭 영역만 제공
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  classBlock: {
+    position: 'absolute',
+    left: 2,
+    right: 2,
+    backgroundColor: '#1884FF',
+    borderRadius: 4,
+    padding: 6,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  className: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  classProfessor: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 2,
+  },
+  classLocation: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 1,
+  },
+  classTime: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  // 새로운 일정 블록 스타일
+  scheduleBlock: {
+    position: 'absolute',
+    padding: 6,
+    borderRadius: 4,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  scheduleTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  scheduleTime: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  scheduleProfessor: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 1,
+  },
+  scheduleLocation: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.9)',
   },
 });

@@ -99,16 +99,6 @@ export const TossLoginScreen: React.FC<TossLoginScreenProps> = ({ onLoginSuccess
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
-                <TouchableOpacity
-                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                  style={styles.eyeIcon}
-                >
-                  {isPasswordVisible ? (
-                    <EyeOff size={20} color={TOSS_THEME.colors.text.tertiary} />
-                  ) : (
-                    <Eye size={20} color={TOSS_THEME.colors.text.tertiary} />
-                  )}
-                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -185,12 +175,14 @@ const styles = StyleSheet.create({
     borderRadius: TOSS_THEME.borderRadius.lg,
     borderWidth: 1,
     borderColor: TOSS_THEME.colors.border,
-    paddingHorizontal: TOSS_THEME.spacing.lg,
+    paddingHorizontal: 16,
     height: 56,
+    gap: 12,
     ...TOSS_THEME.shadow.small,
   },
   inputIcon: {
-    marginRight: TOSS_THEME.spacing.md,
+    width: 20,
+    height: 20,
   },
   input: {
     flex: 1,
@@ -198,9 +190,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: TOSS_THEME.colors.text.primary,
     fontFamily: 'Pretendard',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   eyeIcon: {
-    padding: TOSS_THEME.spacing.xs,
+    width: 20,
+    height: 20,
+    padding: 4,
+    paddingRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     marginBottom: TOSS_THEME.spacing.xl,

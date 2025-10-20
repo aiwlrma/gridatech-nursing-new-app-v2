@@ -114,7 +114,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, onLoginSuc
               {/* 순솜이 캐릭터 사용 */}
               <ImageCharacter 
                 source={require('../../assets/characters/sun.png')} 
-                size={120} 
+                size={140} 
               />
             </Animated.View>
           </View>
@@ -129,7 +129,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, onLoginSuc
             {/* Email Input */}
             <View style={styles.inputContainer}>
               <View style={styles.inputWrapper}>
-                <SvgIcon name="email" size={20} color="#9CA3AF" fallback="📧" style={{ marginRight: 12 }} />
+                <SvgIcon name="email" size={18} color="#9CA3AF" fallback="📧" style={{ marginRight: 10 }} />
                 <TextInput
                   style={styles.textInput}
                   placeholder="이메일을 입력하세요"
@@ -146,7 +146,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, onLoginSuc
             {/* Password Input */}
             <View style={styles.inputContainer}>
               <View style={styles.inputWrapper}>
-                <SvgIcon name="lock" size={20} color="#9CA3AF" fallback="🔒" style={{ marginRight: 12 }} />
+                <SvgIcon name="lock" size={18} color="#9CA3AF" fallback="🔒" style={{ marginRight: 10 }} />
                 <TextInput
                   style={styles.textInput}
                   placeholder="비밀번호를 입력하세요"
@@ -157,18 +157,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, onLoginSuc
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
-                <TouchableOpacity
-                  style={styles.eyeButton}
-                  onPress={togglePasswordVisibility}
-                >
-                  <SvgIcon 
-                    name={isPasswordVisible ? "eyeOff" : "eye"} 
-                    size={20} 
-                    color="#9CA3AF" 
-                    fallback={isPasswordVisible ? '🙈' : '👁'} 
-                    style={{ marginLeft: 8 }}
-                  />
-                </TouchableOpacity>
               </View>
             </View>
 
@@ -224,9 +212,9 @@ const styles = StyleSheet.create({
   },
   wave: {
     flex: 1,
-    backgroundColor: COLORS.waveBackground,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+    backgroundColor: '#1884FF',
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
   scrollContent: {
     flexGrow: 1,
@@ -236,54 +224,47 @@ const styles = StyleSheet.create({
   heroSection: {
     alignItems: 'center',
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 40,
     zIndex: 2,
   },
   logoContainer: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SIZES.spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 12,
+    // 그림자 효과 제거
   },
   titleSection: {
     alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 32,
+    paddingTop: 32,
+    paddingBottom: 24,
   },
   appTitle: {
     fontSize: 28,
-    fontWeight: '800',
-    color: '#1A1F2E',
-    marginBottom: 8,
+    fontWeight: '700',
+    color: '#191F28',
+    marginBottom: 6,
     fontFamily: Platform.select({
-      ios: 'Pretendard-ExtraBold',
-      android: 'Pretendard-ExtraBold',
+      ios: 'Pretendard-Bold',
+      android: 'Pretendard-Bold',
     }),
   },
   appSubtitle: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
     color: '#6B7280',
     fontFamily: Platform.select({
-      ios: 'Pretendard-SemiBold',
-      android: 'Pretendard-SemiBold',
+      ios: 'Pretendard-Medium',
+      android: 'Pretendard-Medium',
     }),
   },
   formContainer: {
     flex: 1,
-    backgroundColor: COLORS.surface,
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     paddingTop: 32,
     marginTop: -20,
     shadowColor: '#000',
@@ -296,17 +277,17 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   inputContainer: {
-    marginBottom: SIZES.spacing.md,
+    marginBottom: 12,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: SIZES.borderRadius.xl,
-    height: 56,
-    paddingHorizontal: SIZES.spacing.md,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    height: 50,
+    paddingHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -319,8 +300,8 @@ const styles = StyleSheet.create({
   // inputIcon 스타일 제거됨 - SVG 아이콘으로 대체
   textInput: {
     flex: 1,
-    fontSize: SIZES.fontSize.md,
-    color: COLORS.text,
+    fontSize: 14,
+    color: '#191F28',
     fontFamily: Platform.select({
       ios: 'Pretendard',
       android: 'Pretendard-Regular',
@@ -328,31 +309,37 @@ const styles = StyleSheet.create({
   },
   eyeButton: {
     padding: SIZES.spacing.xs,
+    paddingRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 32,
+    minHeight: 32,
   },
   // eyeIcon 스타일 제거됨 - SVG 아이콘으로 대체
   loginButton: {
-    backgroundColor: COLORS.primary,
-    height: 56,
-    borderRadius: 18,
+    backgroundColor: '#1884FF',
+    height: 50,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: SIZES.spacing.lg,
-    shadowColor: '#000',
+    marginTop: 8,
+    marginBottom: 20,
+    shadowColor: '#1884FF',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   loginButtonDisabled: {
     opacity: 0.7,
   },
   loginButtonText: {
-    color: COLORS.surface,
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
     fontFamily: Platform.select({
       ios: 'Pretendard-Bold',
       android: 'Pretendard-Bold',
@@ -360,37 +347,40 @@ const styles = StyleSheet.create({
   },
   forgotPasswordButton: {
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: 0,
   },
   forgotPasswordText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
+    color: '#6B7280',
+    fontSize: 13,
+    fontWeight: '500',
     fontFamily: Platform.select({
-      ios: 'Pretendard',
-      android: 'Pretendard-Regular',
+      ios: 'Pretendard-Medium',
+      android: 'Pretendard-Medium',
     }),
   },
   signUpContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: SIZES.spacing.xl,
+    marginTop: 8,
+    marginBottom: 20,
   },
   signUpText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
+    color: '#6B7280',
+    fontSize: 13,
+    fontWeight: '500',
     fontFamily: Platform.select({
-      ios: 'Pretendard',
-      android: 'Pretendard-Regular',
+      ios: 'Pretendard-Medium',
+      android: 'Pretendard-Medium',
     }),
   },
   signUpLink: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: 'bold',
+    color: '#1884FF',
+    fontSize: 13,
+    fontWeight: '600',
     fontFamily: Platform.select({
-      ios: 'Pretendard-Bold',
-      android: 'Pretendard-Bold',
+      ios: 'Pretendard-SemiBold',
+      android: 'Pretendard-SemiBold',
     }),
   },
 });
