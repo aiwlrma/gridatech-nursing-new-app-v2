@@ -72,7 +72,7 @@ export const AllBadgesScreen: React.FC<AllBadgesScreenProps> = ({ onBack }) => {
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>&lt;</Text>
         </TouchableOpacity>
-        <TossText variant="title" style={styles.headerTitle}>성적 & 뱃지</TossText>
+        <Text style={styles.headerTitle}>성적 & 뱃지</Text>
         <View style={{width: 24}} />
       </View>
 
@@ -290,8 +290,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   headerTitle: {
-    color: TOSS_THEME.colors.text.primary,
+    fontSize: 18,
     fontWeight: '700',
+    color: '#191F28',
   },
   
   // 콘텐츠

@@ -115,7 +115,7 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs = [], activeTab, onTabPress
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
       <View style={styles.tabBar}>
         {tabs?.map((tab) => (
           <TabItem
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    height: 84,
+    height: 70,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: '#FFFFFF',
@@ -156,11 +156,11 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   iconContainer: {
     position: 'relative',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   icon: {
     fontSize: 28,

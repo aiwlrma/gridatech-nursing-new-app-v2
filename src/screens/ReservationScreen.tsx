@@ -236,8 +236,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: BLUE_THEME.text,
+    fontWeight: '700',
+    color: '#191F28',
   },
   addButton: {
     padding: 8,

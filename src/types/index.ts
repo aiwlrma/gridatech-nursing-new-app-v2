@@ -71,6 +71,18 @@ export interface Reservation {
   description?: string;
 }
 
+// VR 실습 예약 타입
+export interface VRReservation {
+  id: number;
+  time: string;
+  duration: number;
+  title: string;
+  type: string;
+  level: string;
+  booth: string;
+  status: '예약완료' | '진행중' | '완료' | '취소';
+}
+
 export interface ReservationFilter {
   id: string;
   label: string;
@@ -113,4 +125,5 @@ export type RootStackParamList = {
   Notice: undefined;
   Reservations: undefined;
   Timetable: undefined;
+  TodayReservations: undefined;
 };

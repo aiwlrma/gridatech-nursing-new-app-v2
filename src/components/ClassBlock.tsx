@@ -46,15 +46,20 @@ export const ClassBlock: React.FC<ClassBlockProps> = ({ schedule, onPress }) => 
       onPress={() => onPress?.(schedule)}
       activeOpacity={0.8}
     >
-      <Text style={styles.className} numberOfLines={1}>
-        {schedule.name}
-      </Text>
-      <Text style={styles.classInfo} numberOfLines={1}>
-        {schedule.professor}
-      </Text>
-      <Text style={styles.classInfo} numberOfLines={1}>
-        {schedule.location}
-      </Text>
+      <View style={styles.classContent}>
+        <Text style={styles.className} numberOfLines={2}>
+          {schedule.name}
+        </Text>
+        <Text style={styles.classInfo} numberOfLines={1}>
+          👨‍🏫 {schedule.professor}
+        </Text>
+        <Text style={styles.classInfo} numberOfLines={1}>
+          📍 {schedule.location}
+        </Text>
+        <Text style={styles.classTime} numberOfLines={1}>
+          {schedule.startTime} - {schedule.endTime}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -62,39 +67,53 @@ export const ClassBlock: React.FC<ClassBlockProps> = ({ schedule, onPress }) => 
 const styles = StyleSheet.create({
   classBlock: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    padding: 8,
-    borderRadius: 8,
+    left: 2,
+    right: 2,
+    borderRadius: 12,
     borderLeftWidth: 4,
-    marginHorizontal: 2,
+    backgroundColor: 'transparent', // 그림자 최적화를 위한 배경색 설정
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  classContent: {
+    padding: 10,
+    flex: 1,
+    justifyContent: 'space-between',
   },
   className: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: '#191F28',
-    marginBottom: 2,
+    marginBottom: 4,
+    lineHeight: 16,
     fontFamily: Platform.select({
       ios: 'Pretendard-Bold',
       android: 'Pretendard-Bold',
     }),
   },
   classInfo: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '500',
     color: '#6B7280',
-    marginBottom: 1,
+    marginBottom: 2,
     fontFamily: Platform.select({
       ios: 'Pretendard-Medium',
       android: 'Pretendard-Medium',
+    }),
+  },
+  classTime: {
+    fontSize: 9,
+    fontWeight: '600',
+    color: '#9CA3AF',
+    fontFamily: Platform.select({
+      ios: 'Pretendard-SemiBold',
+      android: 'Pretendard-SemiBold',
     }),
   },
 });

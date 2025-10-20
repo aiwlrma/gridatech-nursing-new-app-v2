@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { MessageCircle, Search, Filter, ChevronRight } from 'lucide-react-native';
+import { MessageCircle, Search, Filter, ChevronRight, ArrowLeft } from 'lucide-react-native';
 import { TOSS_THEME } from '../constants/tossTheme';
 import { TossCard } from '../components/TossCard';
 import { TossText } from '../components/TossText';
@@ -149,7 +149,10 @@ export const TossMessageScreen: React.FC<TossMessageScreenProps> = ({ onBack, on
       {/* 헤더 */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TossText variant="title" style={styles.headerTitle}>메시지</TossText>
+          <TouchableOpacity onPress={onBack} style={styles.backButton}>
+            <ArrowLeft size={24} color={TOSS_THEME.colors.text.primary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>메시지</Text>
           {unreadCount > 0 && (
             <View style={styles.unreadBadge}>
               <TossText variant="small" style={styles.unreadBadgeText}>{unreadCount}</TossText>
@@ -296,9 +299,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  backButton: {
+    marginRight: TOSS_THEME.spacing.sm,
+    padding: TOSS_THEME.spacing.xs,
+  },
   headerTitle: {
-    color: TOSS_THEME.colors.text.primary,
+    fontSize: 18,
     fontWeight: '700',
+    color: '#191F28',
   },
   unreadBadge: {
     backgroundColor: TOSS_THEME.colors.error,

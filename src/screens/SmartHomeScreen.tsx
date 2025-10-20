@@ -24,6 +24,9 @@ interface SmartHomeScreenProps {
   onNavigateToReservationManagement?: () => void;
   onNavigateToMessage?: () => void;
   onNavigateToProfile?: () => void;
+  onNavigateToNursingBadges?: () => void;
+  onNavigateToTodayReservations?: () => void;
+  onNavigateToNotice?: () => void;
 }
 
 export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({ 
@@ -33,7 +36,10 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
   onNavigateToBadges,
   onNavigateToReservationManagement,
   onNavigateToMessage,
-  onNavigateToProfile
+  onNavigateToProfile,
+  onNavigateToNursingBadges,
+  onNavigateToTodayReservations,
+  onNavigateToNotice
 }) => {
 
   // 예약 데이터
@@ -63,6 +69,7 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
 
   const handleViewAll = () => {
     console.log('전체 보기');
+    onNavigateToTodayReservations?.();
   };
 
   const handleAddReservation = () => {
@@ -70,12 +77,17 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
     onNavigateToAddReservation?.();
   };
 
+  const handleNavigateToNursingBadges = () => {
+    console.log('간호 실습 뱃지로 이동');
+    onNavigateToNursingBadges?.();
+  };
+
   // 탭 바 데이터
   const tabs = [
     { id: 'home', label: '홈', iconName: 'home' },
-    { id: 'timetable', label: '시간표', iconName: 'calendar' },
     { id: 'message', label: '메시지', iconName: 'message', hasNotification: true },
-    { id: 'profile', label: '프로필', iconName: 'user' },
+    { id: 'notice', label: '공지사항', iconName: 'bell' },
+    { id: 'myReservations', label: '나의 예약', iconName: 'calendar' },
   ];
 
   const handleTabPress = (tabId: string) => {
@@ -83,14 +95,14 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
       case 'home':
         // 이미 홈 화면이므로 아무것도 하지 않음
         break;
-      case 'timetable':
-        onNavigateToTimetable?.();
-        break;
       case 'message':
         onNavigateToMessage?.();
         break;
-      case 'profile':
-        onNavigateToProfile?.();
+      case 'notice':
+        onNavigateToNotice?.();
+        break;
+      case 'myReservations':
+        onNavigateToTodayReservations?.();
         break;
     }
   };
@@ -116,16 +128,7 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
           completedActivities={12}
           level={7}
         />
-        
-        <CollapsibleCalendar 
-          onDateSelect={(date) => console.log('Selected date:', date)}
-          hasEvents={{
-            '2025-01-15': true,
-            '2025-01-17': true,
-            '2025-01-20': true,
-          }}
-        />
-        
+
         {/* 빠른 액션 카드들 */}
         <View style={styles.quickActions}>
           <TouchableOpacity 
@@ -152,6 +155,37 @@ export const SmartHomeScreen: React.FC<SmartHomeScreenProps> = ({
             <Text style={styles.actionText} numberOfLines={2}>성적 조회</Text>
           </TouchableOpacity>
         </View>
+
+        {/* 간호 실습 뱃지 카드 */}
+        <TouchableOpacity 
+          style={styles.badgeCard}
+          onPress={handleNavigateToNursingBadges}
+          activeOpacity={0.7}
+        >
+          <View style={styles.badgeCardContent}>
+            <View style={styles.badgeIconContainer}>
+              <Text style={styles.badgeIcon}>🏆</Text>
+            </View>
+            <View style={styles.badgeTextContainer}>
+              <Text style={styles.badgeCardTitle}>간호 실습 뱃지</Text>
+              <Text style={styles.badgeCardSubtitle}>
+                60점 이상이면 도전할 수 있어요!
+              </Text>
+            </View>
+            <View style={styles.badgeCardRight}>
+              <Text style={styles.badgeArrow}>→</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        
+        <CollapsibleCalendar 
+          onDateSelect={(date) => console.log('Selected date:', date)}
+          hasEvents={{
+            '2025-01-15': true,
+            '2025-01-17': true,
+            '2025-01-20': true,
+          }}
+        />
         
         <AppointmentCard 
           appointments={appointments}
@@ -178,7 +212,71 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20, // 탭 바를 위한 여백
+    paddingBottom: 100, // 탭 바와 하단 아이콘을 위한 충분한 여백
+  },
+  
+  // 뱃지 카드 스타일
+  badgeCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  
+  badgeCardContent: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center', // 가운데 정렬
+    padding: 20,
+  },
+  
+  badgeIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFF7ED',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  
+  badgeIcon: {
+    fontSize: 24,
+  },
+  
+  badgeTextContainer: {
+    alignItems: 'center', // 텍스트도 가운데 정렬
+    marginBottom: 8,
+  },
+  
+  badgeCardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#191F28',
+    marginBottom: 4,
+    textAlign: 'center', // 제목 가운데 정렬
+  },
+  
+  badgeCardSubtitle: {
+    fontSize: 13,
+    color: '#6B7280',
+    lineHeight: 18,
+    textAlign: 'center', // 부제목 가운데 정렬
+  },
+  
+  badgeCardRight: {
+    // 화살표는 텍스트 아래에 배치
+  },
+  
+  badgeArrow: {
+    fontSize: 18,
+    color: '#9CA3AF',
+    fontWeight: '600',
   },
   
   // 빠른 액션 카드들

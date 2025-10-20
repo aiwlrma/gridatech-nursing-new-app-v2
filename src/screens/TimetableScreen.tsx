@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { TimetableHeader } from '../components/TimetableHeader';
 import { WeekTabs } from '../components/WeekTabs';
 import { TimetableGrid } from '../components/TimetableGrid';
+import { ClassDetailModal } from '../components/ClassDetailModal';
+import { DownloadModal } from '../components/DownloadModal';
+import { AddScheduleModal } from '../components/AddScheduleModal';
 import { ClassSchedule, WeekData } from '../types';
 import { COLORS } from '../constants';
 
@@ -102,20 +105,19 @@ interface TimetableScreenProps {
 export const TimetableScreen: React.FC<TimetableScreenProps> = ({ onBack }) => {
   const [currentWeek, setCurrentWeek] = useState(1);
   const [weekData] = useState<WeekData[]>(mockWeekData);
+  const [showClassDetail, setShowClassDetail] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showAddSchedule, setShowAddSchedule] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<ClassSchedule | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [selectedTime, setSelectedTime] = useState<string>('');
 
   const handleBack = useCallback(() => {
     onBack?.();
   }, [onBack]);
 
   const handleDownload = useCallback(() => {
-    Alert.alert(
-      '시간표 다운로드',
-      '시간표를 이미지로 다운로드하시겠습니까?',
-      [
-        { text: '취소', style: 'cancel' },
-        { text: '다운로드', onPress: () => console.log('다운로드') },
-      ]
-    );
+    setShowDownloadModal(true);
   }, []);
 
   const handleWeekChange = useCallback((week: number) => {
@@ -135,11 +137,74 @@ export const TimetableScreen: React.FC<TimetableScreenProps> = ({ onBack }) => {
   }, [currentWeek]);
 
   const handleClassPress = useCallback((schedule: ClassSchedule) => {
+    setSelectedClass(schedule);
+    setShowClassDetail(true);
+  }, []);
+
+  const handleCloseClassDetail = useCallback(() => {
+    setShowClassDetail(false);
+    setSelectedClass(null);
+  }, []);
+
+  const handleCloseDownloadModal = useCallback(() => {
+    setShowDownloadModal(false);
+  }, []);
+
+  const handleImageDownload = useCallback(() => {
+    Alert.alert('이미지 저장', '시간표가 갤러리에 저장되었습니다.');
+  }, []);
+
+  const handlePDFDownload = useCallback(() => {
+    Alert.alert('PDF 저장', '시간표 PDF가 생성되었습니다.');
+  }, []);
+
+  const handleCalendarSync = useCallback(() => {
+    Alert.alert('캘린더 연동', '수업 일정이 캘린더에 추가되었습니다.');
+  }, []);
+
+  const handleMapPress = useCallback((schedule: ClassSchedule) => {
+    Alert.alert('지도 보기', `${schedule.location} 위치를 지도에서 확인합니다.`);
+  }, []);
+
+  const handleMemoPress = useCallback((schedule: ClassSchedule) => {
+    Alert.alert('메모 추가', '수업 메모를 추가할 수 있습니다.');
+  }, []);
+
+  const handleNotificationPress = useCallback((schedule: ClassSchedule) => {
+    Alert.alert('알림 설정', '수업 시작 전 알림을 설정할 수 있습니다.');
+  }, []);
+
+  const handleEmptySlotPress = useCallback((day: number, time: string) => {
+    setSelectedDay(day);
+    setSelectedTime(time);
+    setShowAddSchedule(true);
+  }, []);
+
+  const handleCloseAddSchedule = useCallback(() => {
+    setShowAddSchedule(false);
+    setSelectedDay(0);
+    setSelectedTime('');
+  }, []);
+
+  const handleSaveSchedule = useCallback((newSchedule: {
+    name: string;
+    professor: string;
+    location: string;
+    startTime: string;
+    endTime: string;
+    day: number;
+  }) => {
+    // 실제로는 여기서 weekData에 새 일정을 추가
+    // 현재는 Alert로 확인만
     Alert.alert(
-      schedule.name,
-      `교수: ${schedule.professor}\n장소: ${schedule.location}\n시간: ${schedule.startTime} - ${schedule.endTime}`,
+      '일정 추가됨',
+      `${newSchedule.name} 수업이 ${newSchedule.startTime}에 추가되었습니다.`,
       [{ text: '확인' }]
     );
+    
+    setShowAddSchedule(false);
+    setSelectedDay(0);
+    setSelectedTime('');
   }, []);
 
   // 현재 주차의 스케줄 가져오기
@@ -163,6 +228,35 @@ export const TimetableScreen: React.FC<TimetableScreenProps> = ({ onBack }) => {
       <TimetableGrid
         schedules={currentSchedules}
         onClassPress={handleClassPress}
+        onEmptySlotPress={handleEmptySlotPress}
+      />
+
+      {/* 수업 상세 모달 */}
+      <ClassDetailModal
+        visible={showClassDetail}
+        schedule={selectedClass}
+        onClose={handleCloseClassDetail}
+        onMapPress={handleMapPress}
+        onMemoPress={handleMemoPress}
+        onNotificationPress={handleNotificationPress}
+      />
+
+      {/* 다운로드 옵션 모달 */}
+      <DownloadModal
+        visible={showDownloadModal}
+        onClose={handleCloseDownloadModal}
+        onImageDownload={handleImageDownload}
+        onPDFDownload={handlePDFDownload}
+        onCalendarSync={handleCalendarSync}
+      />
+
+      {/* 일정 추가 모달 */}
+      <AddScheduleModal
+        visible={showAddSchedule}
+        selectedDay={selectedDay}
+        selectedTime={selectedTime}
+        onClose={handleCloseAddSchedule}
+        onSave={handleSaveSchedule}
       />
     </SafeAreaView>
   );

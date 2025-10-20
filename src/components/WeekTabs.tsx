@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import { COLORS, SIZES } from '../constants';
 
 interface WeekTabsProps {
@@ -16,6 +16,16 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
   onNextWeek,
 }) => {
   const weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  // 현재 주차로 스크롤 이동
+  useEffect(() => {
+    const currentIndex = weeks.indexOf(currentWeek);
+    if (currentIndex !== -1 && scrollViewRef.current) {
+      const scrollX = currentIndex * 80; // 각 탭의 예상 너비
+      scrollViewRef.current.scrollTo({ x: scrollX, animated: true });
+    }
+  }, [currentWeek]);
 
   return (
     <View style={styles.container}>
@@ -27,7 +37,13 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
         <Text style={styles.navIcon}>◀</Text>
       </TouchableOpacity>
       
-      <View style={styles.weekContainer}>
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.weekContainer}
+      >
         {weeks.map((week) => (
           <TouchableOpacity
             key={week}
@@ -48,7 +64,7 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
       
       <TouchableOpacity 
         style={styles.navButton} 
@@ -74,6 +90,7 @@ const styles = StyleSheet.create({
   navButton: {
     padding: SIZES.spacing.xs,
     marginHorizontal: SIZES.spacing.xs,
+    zIndex: 1,
   },
   navIcon: {
     fontSize: 16,
@@ -83,21 +100,33 @@ const styles = StyleSheet.create({
       android: 'Pretendard-Medium',
     }),
   },
-  weekContainer: {
+  scrollContainer: {
     flex: 1,
+  },
+  weekContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: SIZES.spacing.sm,
   },
   weekTab: {
-    paddingHorizontal: SIZES.spacing.sm,
-    paddingVertical: SIZES.spacing.xs,
+    paddingHorizontal: SIZES.spacing.md,
+    paddingVertical: SIZES.spacing.sm,
     marginHorizontal: 2,
-    borderRadius: SIZES.borderRadius.sm,
+    borderRadius: SIZES.borderRadius.md,
     backgroundColor: 'transparent',
+    minWidth: 70,
+    alignItems: 'center',
   },
   activeWeekTab: {
     backgroundColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   weekText: {
     fontSize: SIZES.fontSize.sm,

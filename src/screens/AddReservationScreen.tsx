@@ -10,12 +10,21 @@ import {
 } from 'react-native';
 import { ChevronLeft, Calendar, Clock, MapPin, User } from 'lucide-react-native';
 import { BLUE_THEME } from '../constants/blueTheme';
+import { DatePickerModal } from '../components/DatePickerModal';
+import { TimePickerModal } from '../components/TimePickerModal';
 
 interface AddReservationScreenProps {
   onBack: () => void;
+  onSave: (reservation: {
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+    professor: string;
+  }) => void;
 }
 
-export const AddReservationScreen: React.FC<AddReservationScreenProps> = ({ onBack }) => {
+export const AddReservationScreen: React.FC<AddReservationScreenProps> = ({ onBack, onSave }) => {
   const [formData, setFormData] = useState({
     title: '',
     date: '',
@@ -23,11 +32,44 @@ export const AddReservationScreen: React.FC<AddReservationScreenProps> = ({ onBa
     location: '',
     professor: '',
   });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const handleSave = () => {
-    console.log('예약 저장:', formData);
-    // TODO: 실제 저장 로직 구현
-    onBack();
+    // 필수 필드 검증
+    if (!formData.title.trim()) {
+      alert('예약 제목을 입력해주세요.');
+      return;
+    }
+    if (!formData.date.trim()) {
+      alert('날짜를 입력해주세요.');
+      return;
+    }
+    if (!formData.time.trim()) {
+      alert('시간을 입력해주세요.');
+      return;
+    }
+    if (!formData.location.trim()) {
+      alert('장소를 입력해주세요.');
+      return;
+    }
+    if (!formData.professor.trim()) {
+      alert('담당 교수를 입력해주세요.');
+      return;
+    }
+
+    // 데이터 저장
+    onSave(formData);
+  };
+
+  const handleDateSelect = (date: string) => {
+    setFormData(prev => ({ ...prev, date }));
+    setShowDatePicker(false);
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setFormData(prev => ({ ...prev, time }));
+    setShowTimePicker(false);
   };
 
   return (
@@ -62,31 +104,31 @@ export const AddReservationScreen: React.FC<AddReservationScreenProps> = ({ onBa
           {/* 날짜 */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>날짜</Text>
-            <View style={styles.inputContainer}>
+            <TouchableOpacity 
+              style={styles.inputContainer}
+              onPress={() => setShowDatePicker(true)}
+              activeOpacity={0.7}
+            >
               <Calendar color="#6B7280" size={20} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="2025-01-15"
-                value={formData.date}
-                onChangeText={(text) => setFormData({ ...formData, date: text })}
-                placeholderTextColor="#9CA3AF"
-              />
-            </View>
+              <Text style={[styles.input, formData.date ? styles.inputText : styles.placeholderText]}>
+                {formData.date || '2025-01-15'}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* 시간 */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>시간</Text>
-            <View style={styles.inputContainer}>
+            <TouchableOpacity 
+              style={styles.inputContainer}
+              onPress={() => setShowTimePicker(true)}
+              activeOpacity={0.7}
+            >
               <Clock color="#6B7280" size={20} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="14:00"
-                value={formData.time}
-                onChangeText={(text) => setFormData({ ...formData, time: text })}
-                placeholderTextColor="#9CA3AF"
-              />
-            </View>
+              <Text style={[styles.input, formData.time ? styles.inputText : styles.placeholderText]}>
+                {formData.time || '14:00'}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* 장소 */}
@@ -125,6 +167,22 @@ export const AddReservationScreen: React.FC<AddReservationScreenProps> = ({ onBa
           <Text style={styles.saveButtonText}>예약 저장</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* 날짜 선택 모달 */}
+      <DatePickerModal
+        visible={showDatePicker}
+        selectedDate={formData.date}
+        onClose={() => setShowDatePicker(false)}
+        onSelect={handleDateSelect}
+      />
+
+      {/* 시간 선택 모달 */}
+      <TimePickerModal
+        visible={showTimePicker}
+        selectedTime={formData.time}
+        onClose={() => setShowTimePicker(false)}
+        onSelect={handleTimeSelect}
+      />
     </SafeAreaView>
   );
 };
@@ -151,7 +209,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1A1F2E',
+    color: '#191F28',
   },
   placeholder: {
     width: 40,
@@ -189,6 +247,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#1A1F2E',
+  },
+  inputText: {
+    color: '#1A1F2E',
+  },
+  placeholderText: {
+    color: '#9CA3AF',
   },
   saveButton: {
     backgroundColor: BLUE_THEME.primary,

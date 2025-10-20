@@ -24,17 +24,26 @@ interface Reservation {
 interface ReservationManagementScreenProps {
   onNavigateToAddReservation?: () => void;
   onBack?: () => void;
+  reservations?: Array<{
+    id: number;
+    time: string;
+    title: string;
+    location: string;
+    icon: string;
+    date: string;
+  }>;
 }
 
 export const ReservationManagementScreen: React.FC<ReservationManagementScreenProps> = ({
   onNavigateToAddReservation,
   onBack,
+  reservations: externalReservations,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
-  // 예약 데이터 (여러 날짜에 걸친 예약들)
-  const allReservations: Reservation[] = [
+  // 예약 데이터 (외부에서 전달받은 데이터 사용)
+  const allReservations: Reservation[] = externalReservations || [
     {
       id: 1,
       time: '14:00',
@@ -50,22 +59,6 @@ export const ReservationManagementScreen: React.FC<ReservationManagementScreenPr
       location: '강의실 B동 201호',
       icon: '📚',
       date: new Date().toISOString().split('T')[0], // 오늘
-    },
-    {
-      id: 3,
-      time: '09:00',
-      title: '해부생리학 실습',
-      location: '실습실 C동 101호',
-      icon: '🧬',
-      date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 내일
-    },
-    {
-      id: 4,
-      time: '11:00',
-      title: '임상실습 준비',
-      location: '강의실 A동 205호',
-      icon: '🏥',
-      date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 모레
     },
   ];
 

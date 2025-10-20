@@ -17,3 +17,4 @@ export { TimetableScreen } from './TimetableScreen';
 export { ChatScreen } from './ChatScreen';
 export { ReservationManagementScreen } from './ReservationManagementScreen';
 export { AllBadgesScreen } from './AllBadgesScreen';
+export { default as TodayReservationsScreen } from './TodayReservationsScreen';

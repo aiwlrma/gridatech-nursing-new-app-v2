@@ -23,7 +23,10 @@ export const TimetableHeader: React.FC<TimetableHeaderProps> = ({
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.title}>시간표</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>시간표</Text>
+          <Text style={styles.subtitle}>2024년 1학기</Text>
+        </View>
       </View>
       
       <TouchableOpacity 
@@ -32,7 +35,6 @@ export const TimetableHeader: React.FC<TimetableHeaderProps> = ({
         activeOpacity={0.7}
       >
         <Text style={styles.downloadIcon}>📥</Text>
-        <Text style={styles.downloadText}>다운로드</Text>
       </TouchableOpacity>
     </View>
   );
@@ -43,20 +45,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SIZES.spacing.md,
+    paddingHorizontal: SIZES.spacing.lg,
     paddingTop: 8,
-    paddingBottom: SIZES.spacing.sm,
+    paddingBottom: SIZES.spacing.md,
     backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   backButton: {
-    padding: SIZES.spacing.xs,
+    padding: SIZES.spacing.sm,
     marginRight: SIZES.spacing.sm,
+    borderRadius: SIZES.borderRadius.sm,
+    backgroundColor: COLORS.background,
   },
   backIcon: {
     fontSize: 20,
@@ -66,34 +79,46 @@ const styles = StyleSheet.create({
       android: 'Pretendard-Medium',
     }),
   },
+  titleContainer: {
+    flex: 1,
+  },
   title: {
-    fontSize: SIZES.fontSize.lg,
+    fontSize: SIZES.fontSize.xl,
     fontWeight: '700',
     color: COLORS.text,
+    marginBottom: 2,
     fontFamily: Platform.select({
       ios: 'Pretendard-Bold',
       android: 'Pretendard-Bold',
     }),
   },
+  subtitle: {
+    fontSize: SIZES.fontSize.sm,
+    fontWeight: '500',
+    color: COLORS.textSecondary,
+    fontFamily: Platform.select({
+      ios: 'Pretendard-Medium',
+      android: 'Pretendard-Medium',
+    }),
+  },
   downloadButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: SIZES.spacing.sm,
-    paddingVertical: SIZES.spacing.xs,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: COLORS.primary,
-    borderRadius: SIZES.borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   downloadIcon: {
-    fontSize: 16,
-    marginRight: SIZES.spacing.xs,
-  },
-  downloadText: {
-    fontSize: SIZES.fontSize.sm,
-    fontWeight: '600',
+    fontSize: 20,
     color: COLORS.surface,
-    fontFamily: Platform.select({
-      ios: 'Pretendard-SemiBold',
-      android: 'Pretendard-SemiBold',
-    }),
   },
 });

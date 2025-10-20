@@ -15,7 +15,8 @@ import {
   User, 
   Phone, 
   MessageCircle, 
-  Settings 
+  Settings,
+  ArrowLeft
 } from 'lucide-react-native';
 import { Message, MessageFilter } from '../types';
 
@@ -244,6 +245,9 @@ export const MessageScreen: React.FC<MessageScreenProps> = ({ onNavigateToChat, 
       {/* 헤더 */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
+          <TouchableOpacity onPress={onBack} style={styles.backButton}>
+            <ArrowLeft size={24} color="#191F28" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleEditPress}>
             <Text style={styles.editButton}>편집</Text>
           </TouchableOpacity>
@@ -325,13 +329,19 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 12,
+    padding: 4,
   },
   editButton: {
     fontSize: 17,
     color: '#1884FF',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#191F28',
   },

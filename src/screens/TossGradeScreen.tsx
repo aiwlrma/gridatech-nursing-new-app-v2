@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { ChevronLeft, BarChart3, TrendingUp, Star, Target, Award, Lock, CheckCircle2, Sparkles } from 'lucide-react-native';
+import { ChevronLeft, TrendingUp, Star, Target, Award, Clock, CheckCircle2, Sparkles, BookOpen, Zap, Brain } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TOSS_THEME } from '../constants/tossTheme';
 import { TossCard } from '../components/TossCard';
@@ -20,209 +20,169 @@ interface TossGradeScreenProps {
 }
 
 export const TossGradeScreen: React.FC<TossGradeScreenProps> = ({ onBack, onNavigateToAllBadges }) => {
-  const [activeTab, setActiveTab] = useState('grades');
+  // 이번 주 성과 데이터
+  const weeklyHighlights = {
+    scoreImprovement: 8,
+    vrPracticeTime: 4.5,
+    completedScenarios: 3,
+    weekRange: '10/13 - 10/17'
+  };
 
-  // 성적 데이터
-  const subjects = [
-    { name: '기초간호학', score: 95, grade: 'A+' },
-    { name: '성인간호학', score: 88, grade: 'A' },
-    { name: '아동간호학', score: 92, grade: 'A+' },
-    { name: '정신간호학', score: 85, grade: 'B+' },
+  // 성장 그래프 데이터 (최근 5회 점수)
+  const growthChartData = [68, 72, 75, 78, 85];
+
+  // 강점 분석 데이터
+  const strengths = [
+    { 
+      name: '응급 처치', 
+      score: 92, 
+      icon: '🩺', 
+      comment: '최고 기록!',
+      progress: 92 
+    },
+    { 
+      name: '주사 실습', 
+      score: 85, 
+      icon: '💉', 
+      comment: '안정적!',
+      progress: 85 
+    },
+    { 
+      name: '환자 소통', 
+      score: 88, 
+      icon: '💬', 
+      comment: '뛰어나요!',
+      progress: 88 
+    }
   ];
 
-  // 최근 시험 데이터
-  const recentTests = [
-    { name: '기초간호학 중간고사', date: '2025.01.15', score: 95 },
-    { name: '성인간호학 퀴즈', date: '2025.01.12', score: 88 },
-    { name: '아동간호학 실습평가', date: '2025.01.10', score: 92 },
-  ];
+  // 다음 목표 데이터 (하나만 표시)
+  const nextGoal = {
+    name: '피하주사',
+    currentScore: 68,
+    targetScore: 70,
+    icon: '🩹',
+    description: '68점 → 70점'
+  };
 
-  // 뱃지 데이터
-  const badges = [
-    { id: 1, name: '첫 A+ 달성', emoji: '🏆', colors: ['#FCD34D', '#F59E0B'], unlocked: true, date: '2025.01.10' },
-    { id: 2, name: '실습 마스터', emoji: '💉', colors: ['#60A5FA', '#3B82F6'], unlocked: true, date: '2025.01.08' },
-    { id: 3, name: '완벽한 출석', emoji: '🎯', colors: ['#34D399', '#10B981'], unlocked: false, requirement: '출석률 100%' },
-    { id: 4, name: '성실왕', emoji: '⭐', colors: ['#A78BFA', '#8B5CF6'], unlocked: false, requirement: '과제 10개 완료' },
-    { id: 5, name: '퀴즈 마스터', emoji: '🧠', colors: ['#F9A8D4', '#EC4899'], unlocked: true, date: '2025.01.05' },
-    { id: 6, name: '실습 완주', emoji: '🏥', colors: ['#FBBF24', '#F59E0B'], unlocked: false, requirement: '실습 20회 완료' },
-  ];
+  // AI 튜터 조언 (간결하게)
+  const aiTip = "손목 각도 45도 유지하기";
 
-  // 업적 데이터
-  const achievements = [
-    { name: '첫 번째 A+ 달성', date: '2025.01.10', xp: 100 },
-    { name: '연속 출석 30일', date: '2025.01.08', xp: 50 },
-    { name: '퀴즈 10회 완료', date: '2025.01.05', xp: 75 },
-  ];
-
-  const tabs = [
-    { id: 'grades', label: '성적' },
-    { id: 'badges', label: '뱃지' },
-    { id: 'achievements', label: '업적' },
-  ];
-
-  const renderGradesTab = () => (
-    <View>
-      {/* 학기 성적 요약 */}
-      <TossCard style={styles.summaryCard}>
-        <View style={styles.summaryHeader}>
-          <TossText type="title" style={styles.summaryTitle}>2025-1학기</TossText>
-          <View style={styles.gpaContainer}>
-            <TossText type="hero" style={styles.gpaNumber}>92</TossText>
-            <TossText type="caption" style={styles.gpaLabel}>평균</TossText>
-          </View>
+  // 이번 주 하이라이트 (간결하게)
+  const renderWeeklyHighlights = () => (
+    <TossCard style={styles.highlightCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.headerEmoji}>🎉</Text>
+        <TossText variant="title" style={styles.cardTitle}>이번 주 하이라이트</TossText>
+      </View>
+      
+      <View style={styles.statsGrid}>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>📈</Text>
+          <TossText variant="display" style={styles.gridStatValue}>+{weeklyHighlights.scoreImprovement}점</TossText>
+          <TossText variant="caption" style={styles.gridStatLabel}>지난주 대비</TossText>
         </View>
         
-        <View style={styles.gradeDisplay}>
-          <TossText type="hero" style={styles.gradeLetter}>A+</TossText>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>⏱️</Text>
+          <TossText variant="display" style={styles.gridStatValue}>{weeklyHighlights.vrPracticeTime}시간</TossText>
+          <TossText variant="caption" style={styles.gridStatLabel}>VR 실습</TossText>
         </View>
-      </TossCard>
-
-      {/* 과목별 성적 */}
-      <View style={styles.subjectsSection}>
-        <TossText type="title" style={styles.sectionTitle}>과목별 성적</TossText>
-        {subjects.map((subject, index) => (
-          <TossCard key={index} style={styles.subjectCard}>
-            <View style={styles.subjectRow}>
-              <View style={styles.subjectInfo}>
-                <TossText type="body" style={styles.subjectName}>{subject.name}</TossText>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${subject.score}%` }]} />
-                </View>
-              </View>
-              <View style={styles.scoreContainer}>
-                <TossText type="display" style={styles.subjectScore}>{subject.score}</TossText>
-                <TossText type="caption" style={styles.subjectGrade}>{subject.grade}</TossText>
-              </View>
-            </View>
-          </TossCard>
-        ))}
+        
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>✅</Text>
+          <TossText variant="display" style={styles.gridStatValue}>{weeklyHighlights.completedScenarios}개</TossText>
+          <TossText variant="caption" style={styles.gridStatLabel}>완료</TossText>
+        </View>
       </View>
-
-      {/* 최근 시험 */}
-      <View style={styles.recentTestsSection}>
-        <TossText type="title" style={styles.sectionTitle}>최근 시험</TossText>
-        {recentTests.map((test, index) => (
-          <TouchableOpacity key={index} style={styles.testCard}>
-            <TossCard style={styles.testCardContent}>
-              <View style={styles.testIcon}>
-                <BarChart3 size={24} color={TOSS_THEME.colors.primary} />
-              </View>
-              <View style={styles.testInfo}>
-                <TossText type="body" style={styles.testName}>{test.name}</TossText>
-                <TossText type="caption" style={styles.testDate}>{test.date}</TossText>
-              </View>
-              <View style={styles.testScore}>
-                <TossText type="display" style={styles.testScoreText}>{test.score}점</TossText>
-              </View>
-            </TossCard>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+    </TossCard>
   );
 
-  const renderBadgesTab = () => (
-    <View>
-      {/* 뱃지 진행률 */}
-      <TossCard style={styles.badgeProgressCard}>
-        <View style={styles.badgeProgressContent}>
-          <TossText type="hero" style={styles.badgeProgressNumber}>3 / 6</TossText>
-          <TossText type="caption" style={styles.badgeProgressLabel}>뱃지 획득</TossText>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '50%' }]} />
+  // 성장 추세 (간결하게)
+  const renderGrowthChart = () => (
+    <TossCard style={styles.chartCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.headerEmoji}>📈</Text>
+        <TossText variant="title" style={styles.cardTitle}>성장 추세</TossText>
+      </View>
+      
+      <View style={styles.chart}>
+        {growthChartData.map((score, idx) => (
+          <View style={styles.chartBar} key={idx}>
+            <View style={[styles.chartFill, {height: `${score}%`}]} />
+            <TossText variant="caption" style={styles.chartLabel}>{score}</TossText>
+          </View>
+        ))}
+      </View>
+      
+      <View style={styles.insightBox}>
+        <Text style={styles.insightIcon}>💪</Text>
+        <TossText variant="caption" style={styles.insightText}>계속 상승 중!</TossText>
+      </View>
+    </TossCard>
+  );
+
+  // TOP 3 강점 (간결하게)
+  const renderStrengthAnalysis = () => (
+    <TossCard style={styles.strengthCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.headerEmoji}>🌟</Text>
+        <TossText variant="title" style={styles.cardTitle}>TOP 3 강점</TossText>
+      </View>
+      
+      {strengths.map((strength, index) => (
+        <View style={styles.strengthItem} key={index}>
+          <Text style={styles.strengthIcon}>{strength.icon}</Text>
+          <View style={styles.strengthContent}>
+            <View style={styles.strengthHeader}>
+              <TossText variant="body" style={styles.strengthName}>{strength.name}</TossText>
+              <TossText variant="caption" style={styles.strengthScore}>{strength.score}점</TossText>
+            </View>
+            <View style={styles.strengthBar}>
+              <View style={[styles.strengthFill, {width: `${strength.progress}%`}]} />
+            </View>
           </View>
         </View>
-      </TossCard>
+      ))}
+    </TossCard>
+  );
 
-      {/* 전체 뱃지 보기 버튼 */}
-      {onNavigateToAllBadges && (
-        <TouchableOpacity
-          style={styles.viewAllBadgesButton}
-          onPress={onNavigateToAllBadges}
-          activeOpacity={0.8}
-        >
-          <TossCard style={styles.viewAllBadgesCard}>
-            <View style={styles.viewAllBadgesContent}>
-              <TossText variant="body" style={styles.viewAllBadgesText}>전체 뱃지 보기</TossText>
-              <ChevronLeft size={20} color={TOSS_THEME.colors.primary} style={styles.viewAllBadgesIcon} />
-            </View>
-          </TossCard>
+  // 다음 목표 (하나만)
+  const renderNextGoal = () => (
+    <TossCard style={styles.goalCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.headerEmoji}>🎯</Text>
+        <TossText variant="title" style={styles.cardTitle}>다음 목표</TossText>
+      </View>
+      
+      <View style={styles.goalBox}>
+        <View style={styles.goalIconBox}>
+          <Text style={styles.goalIcon}>{nextGoal.icon}</Text>
+        </View>
+        
+        <View style={styles.goalContent}>
+          <TossText variant="body" style={styles.goalName}>{nextGoal.name}</TossText>
+          <TossText variant="caption" style={styles.goalDesc}>{nextGoal.description}</TossText>
+          <TossText variant="caption" style={styles.goalMeta}>2점만 더!</TossText>
+        </View>
+        
+        <TouchableOpacity style={styles.goalButton}>
+          <TossText variant="caption" style={styles.goalButtonText}>연습</TossText>
         </TouchableOpacity>
-      )}
-
-      {/* 뱃지 그리드 */}
-      <View style={styles.badgesGrid}>
-        {badges.map((badge) => (
-          <TouchableOpacity
-            key={badge.id}
-            style={[styles.badgeCard, !badge.unlocked && styles.lockedBadge]}
-            activeOpacity={0.8}
-          >
-            <TossCard style={styles.badgeCardContent}>
-              {badge.unlocked ? (
-                <LinearGradient colors={badge.colors} style={styles.badgeIcon}>
-                  <Text style={styles.badgeEmoji}>{badge.emoji}</Text>
-                </LinearGradient>
-              ) : (
-                <View style={styles.lockedIcon}>
-                  <Lock size={32} color={TOSS_THEME.colors.text.tertiary} />
-                </View>
-              )}
-              <TossText type="caption" style={styles.badgeName}>{badge.name}</TossText>
-              {badge.unlocked ? (
-                <TossText type="small" style={styles.badgeDate}>{badge.date}</TossText>
-              ) : (
-                <TossText type="small" style={styles.badgeRequirement}>{badge.requirement}</TossText>
-              )}
-            </TossCard>
-          </TouchableOpacity>
-        ))}
       </View>
+    </TossCard>
+  );
+
+  // AI 팁 (간결하게)
+  const renderAITip = () => (
+    <View style={styles.tipBanner}>
+      <Text style={styles.tipIcon}>💡</Text>
+      <TossText variant="caption" style={styles.tipText}>
+        AI 팁: {aiTip}
+      </TossText>
     </View>
   );
 
-  const renderAchievementsTab = () => (
-    <View>
-      {/* 진행중인 도전과제 */}
-      <TossCard style={styles.challengeCard}>
-        <View style={styles.challengeHeader}>
-          <View style={styles.challengeIcon}>
-            <Target size={24} color={TOSS_THEME.colors.primary} />
-          </View>
-          <View style={styles.challengeInfo}>
-            <TossText type="body" style={styles.challengeTitle}>10개 실습 완료하기</TossText>
-            <TossText type="caption" style={styles.challengeProgress}>8 / 10 완료</TossText>
-          </View>
-        </View>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: '80%' }]} />
-        </View>
-        <View style={styles.rewardContainer}>
-          <Sparkles size={16} color="#F59E0B" />
-          <TossText type="caption" style={styles.rewardText}>+200 XP</TossText>
-        </View>
-      </TossCard>
-
-      {/* 완료된 업적 */}
-      <View style={styles.completedSection}>
-        <TossText type="title" style={styles.sectionTitle}>완료된 업적</TossText>
-        {achievements.map((achievement, index) => (
-          <TossCard key={index} style={styles.achievementCard}>
-            <View style={styles.achievementContent}>
-              <View style={styles.achievementIcon}>
-                <CheckCircle2 size={24} color={TOSS_THEME.colors.success} />
-              </View>
-              <View style={styles.achievementInfo}>
-                <TossText type="body" style={styles.achievementName}>{achievement.name}</TossText>
-                <TossText type="caption" style={styles.achievementDate}>완료: {achievement.date}</TossText>
-              </View>
-              <TossText type="display" style={styles.achievementXp}>+{achievement.xp} XP</TossText>
-            </View>
-          </TossCard>
-        ))}
-      </View>
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -231,19 +191,19 @@ export const TossGradeScreen: React.FC<TossGradeScreenProps> = ({ onBack, onNavi
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <ChevronLeft size={24} color={TOSS_THEME.colors.text.primary} />
         </TouchableOpacity>
-        <TossText type="title" style={styles.headerTitle}>성적 조회</TossText>
+        <Text style={styles.headerTitle}>학습 리포트</Text>
         <TouchableOpacity style={styles.chartButton}>
-          <BarChart3 size={24} color={TOSS_THEME.colors.primary} />
+          <TrendingUp size={24} color={TOSS_THEME.colors.primary} />
         </TouchableOpacity>
       </View>
 
-      {/* 레벨 Hero 카드 */}
+      {/* 레벨 Hero 카드 (유지) */}
       <LinearGradient colors={['#1E88E5', '#1565C0']} style={styles.levelCard}>
         <View style={styles.levelContent}>
           <View style={styles.levelInfo}>
-            <TossText type="caption" style={styles.levelLabel}>현재 레벨</TossText>
-            <TossText type="hero" style={styles.levelValue}>Level 7</TossText>
-            <TossText type="caption" style={styles.xpText}>2,450 / 3,000 XP</TossText>
+            <TossText variant="caption" style={styles.levelLabel}>현재 레벨</TossText>
+            <TossText variant="hero" style={styles.levelValue}>Level 7</TossText>
+            <TossText variant="caption" style={styles.xpText}>2,450 / 3,000 XP</TossText>
           </View>
           <View style={styles.badgeIcon}>
             <Award color="#FCD34D" size={48} />
@@ -257,53 +217,31 @@ export const TossGradeScreen: React.FC<TossGradeScreenProps> = ({ onBack, onNavi
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <TrendingUp color="#FFFFFF" size={20} />
-            <TossText type="display" style={styles.statValue}>92점</TossText>
-            <TossText type="caption" style={styles.statLabel}>평균</TossText>
+            <TossText variant="display" style={styles.statValue}>92점</TossText>
+            <TossText variant="caption" style={styles.statLabel}>평균</TossText>
           </View>
           <View style={styles.divider} />
           <View style={styles.statItem}>
             <Star color="#FFFFFF" size={20} />
-            <TossText type="display" style={styles.statValue}>3개</TossText>
-            <TossText type="caption" style={styles.statLabel}>뱃지</TossText>
+            <TossText variant="display" style={styles.statValue}>3개</TossText>
+            <TossText variant="caption" style={styles.statLabel}>뱃지</TossText>
           </View>
           <View style={styles.divider} />
           <View style={styles.statItem}>
             <Target color="#FFFFFF" size={20} />
-            <TossText type="display" style={styles.statValue}>8/10</TossText>
-            <TossText type="caption" style={styles.statLabel}>완료</TossText>
+            <TossText variant="display" style={styles.statValue}>8/10</TossText>
+            <TossText variant="caption" style={styles.statLabel}>완료</TossText>
           </View>
         </View>
       </LinearGradient>
 
-      {/* 탭 */}
-      <View style={styles.tabContainer}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.id}
-            style={[
-              styles.tab,
-              activeTab === tab.id && styles.activeTab,
-            ]}
-            onPress={() => setActiveTab(tab.id)}
-          >
-            <TossText
-              type="body"
-              style={[
-                styles.tabText,
-                activeTab === tab.id && styles.activeTabText,
-              ]}
-            >
-              {tab.label}
-            </TossText>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* 콘텐츠 */}
+      {/* 학습 리포트 콘텐츠 */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {activeTab === 'grades' && renderGradesTab()}
-        {activeTab === 'badges' && renderBadgesTab()}
-        {activeTab === 'achievements' && renderAchievementsTab()}
+        {renderWeeklyHighlights()}
+        {renderGrowthChart()}
+        {renderStrengthAnalysis()}
+        {renderNextGoal()}
+        {renderAITip()}
         
         <View style={styles.bottomSpacing} />
       </ScrollView>
@@ -321,31 +259,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: TOSS_THEME.spacing.lg,
-    paddingTop: TOSS_THEME.spacing.lg,
-    paddingBottom: TOSS_THEME.spacing.md,
+    paddingTop: TOSS_THEME.spacing.md,
+    paddingBottom: TOSS_THEME.spacing.sm,
   },
   backButton: {
     padding: TOSS_THEME.spacing.sm,
   },
   headerTitle: {
-    color: TOSS_THEME.colors.text.primary,
+    fontSize: 18,
     fontWeight: '700',
+    color: '#191F28',
   },
   chartButton: {
     padding: TOSS_THEME.spacing.sm,
   },
   levelCard: {
     marginHorizontal: TOSS_THEME.spacing.lg,
-    marginBottom: TOSS_THEME.spacing.lg,
+    marginBottom: TOSS_THEME.spacing.md,
     borderRadius: TOSS_THEME.borderRadius.lg,
-    padding: TOSS_THEME.spacing.lg,
-    height: 200,
+    padding: TOSS_THEME.spacing.md,
+    height: 120,
   },
   levelContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: TOSS_THEME.spacing.md,
+    alignItems: 'flex-start',
+    marginBottom: TOSS_THEME.spacing.xs,
   },
   levelInfo: {
     flex: 1,
@@ -356,7 +295,8 @@ const styles = StyleSheet.create({
   },
   levelValue: {
     color: '#FFFFFF',
-    marginVertical: TOSS_THEME.spacing.xs,
+    marginVertical: 2,
+    fontSize: 28, // 기존보다 15px 줄임
   },
   xpText: {
     color: '#FFFFFF',
@@ -365,17 +305,18 @@ const styles = StyleSheet.create({
   badgeIcon: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: -8,
   },
   progressBar: {
-    height: 8,
+    height: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 4,
-    marginBottom: TOSS_THEME.spacing.md,
+    borderRadius: 3,
+    marginBottom: TOSS_THEME.spacing.xs,
   },
   progressFill: {
     height: '100%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 4,
+    borderRadius: 3,
   },
   statsRow: {
     flexDirection: 'row',
@@ -399,263 +340,217 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
-  tabContainer: {
-    flexDirection: 'row',
-    marginHorizontal: TOSS_THEME.spacing.lg,
-    marginBottom: TOSS_THEME.spacing.lg,
-    backgroundColor: TOSS_THEME.colors.background,
-    borderRadius: TOSS_THEME.borderRadius.md,
-    padding: 4,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: TOSS_THEME.spacing.sm,
-    alignItems: 'center',
-    borderRadius: TOSS_THEME.borderRadius.sm,
-  },
-  activeTab: {
-    backgroundColor: TOSS_THEME.colors.primary,
-  },
-  tabText: {
-    color: TOSS_THEME.colors.text.secondary,
-    fontWeight: '600',
-  },
-  activeTabText: {
-    color: '#FFFFFF',
-  },
   content: {
     flex: 1,
     paddingHorizontal: TOSS_THEME.spacing.lg,
   },
-  summaryCard: {
-    marginBottom: TOSS_THEME.spacing.lg,
-    alignItems: 'center',
-  },
-  summaryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: TOSS_THEME.spacing.md,
-  },
-  summaryTitle: {
-    color: TOSS_THEME.colors.text.primary,
-  },
-  gpaContainer: {
-    alignItems: 'center',
-  },
-  gpaNumber: {
-    color: TOSS_THEME.colors.primary,
-  },
-  gpaLabel: {
-    color: TOSS_THEME.colors.text.secondary,
-  },
-  gradeDisplay: {
-    alignItems: 'center',
-  },
-  gradeLetter: {
-    color: TOSS_THEME.colors.success,
-    fontSize: 64,
-  },
-  subjectsSection: {
-    marginBottom: TOSS_THEME.spacing.lg,
-  },
-  sectionTitle: {
-    color: TOSS_THEME.colors.text.primary,
-    marginBottom: TOSS_THEME.spacing.md,
-  },
-  subjectCard: {
-    marginBottom: TOSS_THEME.spacing.sm,
-  },
-  subjectRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  subjectInfo: {
-    flex: 1,
-  },
-  subjectName: {
-    color: TOSS_THEME.colors.text.primary,
-    marginBottom: TOSS_THEME.spacing.xs,
-  },
-  scoreContainer: {
-    alignItems: 'center',
-  },
-  subjectScore: {
-    color: TOSS_THEME.colors.primary,
-  },
-  subjectGrade: {
-    color: TOSS_THEME.colors.text.secondary,
-  },
-  recentTestsSection: {
-    marginBottom: TOSS_THEME.spacing.lg,
-  },
-  testCard: {
-    marginBottom: TOSS_THEME.spacing.sm,
-  },
-  testCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  testIcon: {
-    marginRight: TOSS_THEME.spacing.md,
-  },
-  testInfo: {
-    flex: 1,
-  },
-  testName: {
-    color: TOSS_THEME.colors.text.primary,
-    marginBottom: TOSS_THEME.spacing.xs / 2,
-  },
-  testDate: {
-    color: TOSS_THEME.colors.text.secondary,
-  },
-  testScore: {
-    alignItems: 'center',
-  },
-  testScoreText: {
-    color: TOSS_THEME.colors.primary,
-  },
-  badgeProgressCard: {
-    marginBottom: TOSS_THEME.spacing.lg,
-    alignItems: 'center',
-  },
-  viewAllBadgesButton: {
-    marginBottom: TOSS_THEME.spacing.lg,
-  },
-  viewAllBadgesCard: {
-    paddingVertical: TOSS_THEME.spacing.md,
-    paddingHorizontal: TOSS_THEME.spacing.lg,
-  },
-  viewAllBadgesContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  viewAllBadgesText: {
-    color: TOSS_THEME.colors.text.primary,
-    fontWeight: '600',
-  },
-  viewAllBadgesIcon: {
-    transform: [{ rotate: '180deg' }],
-  },
-  badgeProgressContent: {
-    alignItems: 'center',
-  },
-  badgeProgressNumber: {
-    color: TOSS_THEME.colors.primary,
-    marginBottom: TOSS_THEME.spacing.xs,
-  },
-  badgeProgressLabel: {
-    color: TOSS_THEME.colors.text.secondary,
-    marginBottom: TOSS_THEME.spacing.md,
-  },
-  badgesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  badgeCard: {
-    width: '48%',
-    marginBottom: TOSS_THEME.spacing.md,
-  },
-  lockedBadge: {
-    opacity: 0.5,
-  },
-  badgeCardContent: {
-    alignItems: 'center',
-    padding: TOSS_THEME.spacing.md,
-  },
-  badgeIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: TOSS_THEME.spacing.sm,
-  },
-  badgeEmoji: {
-    fontSize: 24,
-  },
-  lockedIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: TOSS_THEME.spacing.sm,
-    backgroundColor: TOSS_THEME.colors.background,
-  },
-  badgeName: {
-    color: TOSS_THEME.colors.text.primary,
-    textAlign: 'center',
-    marginBottom: TOSS_THEME.spacing.xs / 2,
-  },
-  badgeDate: {
-    color: TOSS_THEME.colors.text.secondary,
-    textAlign: 'center',
-  },
-  badgeRequirement: {
-    color: TOSS_THEME.colors.text.tertiary,
-    textAlign: 'center',
-  },
-  challengeCard: {
-    marginBottom: TOSS_THEME.spacing.lg,
-  },
-  challengeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: TOSS_THEME.spacing.md,
-  },
-  challengeIcon: {
-    marginRight: TOSS_THEME.spacing.md,
-  },
-  challengeInfo: {
-    flex: 1,
-  },
-  challengeTitle: {
-    color: TOSS_THEME.colors.text.primary,
-    marginBottom: TOSS_THEME.spacing.xs / 2,
-  },
-  challengeProgress: {
-    color: TOSS_THEME.colors.text.secondary,
-  },
-  rewardContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: TOSS_THEME.spacing.sm,
-  },
-  rewardText: {
-    color: '#F59E0B',
-    marginLeft: TOSS_THEME.spacing.xs,
-  },
-  completedSection: {
-    marginBottom: TOSS_THEME.spacing.lg,
-  },
-  achievementCard: {
-    marginBottom: TOSS_THEME.spacing.sm,
-  },
-  achievementContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  achievementIcon: {
-    marginRight: TOSS_THEME.spacing.md,
-  },
-  achievementInfo: {
-    flex: 1,
-  },
-  achievementName: {
-    color: TOSS_THEME.colors.text.primary,
-    marginBottom: TOSS_THEME.spacing.xs / 2,
-  },
-  achievementDate: {
-    color: TOSS_THEME.colors.text.secondary,
-  },
-  achievementXp: {
-    color: TOSS_THEME.colors.success,
-  },
   bottomSpacing: {
     height: 100,
+  },
+
+  // 통일된 카드 스타일
+  highlightCard: {
+    marginBottom: 16,
+  },
+  chartCard: {
+    marginBottom: 16,
+  },
+  strengthCard: {
+    marginBottom: 16,
+  },
+  goalCard: {
+    marginBottom: 16,
+  },
+  
+  // 카드 헤더 (통일)
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  headerEmoji: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  cardTitle: {
+    color: TOSS_THEME.colors.text.primary,
+    fontSize: 16, // 18px → 16px로 줄임
+    fontWeight: '700',
+  },
+  
+  // 통계 그리드
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statBox: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  statIcon: {
+    fontSize: 28,
+    marginBottom: 8,
+  },
+  gridStatValue: {
+    color: TOSS_THEME.colors.primary,
+    fontSize: 18, // 20px → 18px로 줄임
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  gridStatLabel: {
+    color: TOSS_THEME.colors.text.secondary,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  // 차트 스타일
+  chart: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    height: 100,
+    marginBottom: 16,
+  },
+  chartBar: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  chartFill: {
+    width: 20,
+    backgroundColor: TOSS_THEME.colors.primary,
+    borderRadius: 8,
+    marginBottom: 8,
+    minHeight: 20,
+  },
+  chartLabel: {
+    color: TOSS_THEME.colors.text.secondary,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  insightBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    padding: 12,
+    borderRadius: 12,
+  },
+  insightIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  insightText: {
+    color: '#10B981',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // 강점 스타일
+  strengthItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  strengthIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  strengthContent: {
+    flex: 1,
+  },
+  strengthHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  strengthName: {
+    color: TOSS_THEME.colors.text.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  strengthScore: {
+    color: '#10B981',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  strengthBar: {
+    height: 6,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 3,
+  },
+  strengthFill: {
+    height: '100%',
+    backgroundColor: '#10B981',
+    borderRadius: 3,
+  },
+
+  // 목표 스타일
+  goalBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  goalIconBox: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FFF7ED',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  goalIcon: {
+    fontSize: 28,
+  },
+  goalContent: {
+    flex: 1,
+  },
+  goalName: {
+    color: TOSS_THEME.colors.text.primary,
+    fontSize: 14, // 15px → 14px로 줄임
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  goalDesc: {
+    color: TOSS_THEME.colors.text.secondary,
+    fontSize: 12, // 13px → 12px로 줄임
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  goalMeta: {
+    color: '#9CA3AF',
+    fontSize: 11, // 12px → 11px로 줄임
+  },
+  goalButton: {
+    backgroundColor: TOSS_THEME.colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  goalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13, // 14px → 13px로 줄임
+    fontWeight: '700',
+  },
+
+  // AI 팁 스타일
+  tipBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF7ED',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  tipIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  tipText: {
+    flex: 1,
+    color: '#F59E0B',
+    fontSize: 13, // 14px → 13px로 줄임
+    fontWeight: '600',
   },
 });

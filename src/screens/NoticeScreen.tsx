@@ -83,7 +83,11 @@ const filters: NoticeFilter[] = [
   { id: 'general', label: '일반', filter: '일반' },
 ];
 
-export const NoticeScreen: React.FC = () => {
+interface NoticeScreenProps {
+  onBack?: () => void;
+}
+
+export const NoticeScreen: React.FC<NoticeScreenProps> = ({ onBack }) => {
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filteredNotices = useMemo(() => {
@@ -99,8 +103,7 @@ export const NoticeScreen: React.FC = () => {
   };
 
   const handleBackPress = () => {
-    // 뒤로가기 로직
-    console.log('Back pressed');
+    onBack?.();
   };
 
   const handleFilterPress = () => {
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#191F28',
     fontFamily: Platform.select({

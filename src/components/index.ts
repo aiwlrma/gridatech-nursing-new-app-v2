@@ -60,5 +60,17 @@ export { TimetableHeader } from './TimetableHeader';
 export { WeekTabs } from './WeekTabs';
 export { TimetableGrid } from './TimetableGrid';
 export { ClassBlock } from './ClassBlock';
+export { ClassDetailModal } from './ClassDetailModal';
+export { DownloadModal } from './DownloadModal';
+export { AddScheduleModal } from './AddScheduleModal';
+export { DatePickerModal } from './DatePickerModal';
+export { TimePickerModal } from './TimePickerModal';
 export { TodayTimetableTab } from './TodayTimetableTab';
 export { TodayClassCard } from './TodayClassCard';
+
+// 뱃지 관련 컴포넌트들
+export { ProgressBar } from './ProgressBar';
+export { CircularProgress } from './CircularProgress';
+export { ScoreChart } from './ScoreChart';
+export { BadgeDetailModal } from './BadgeDetailModal';
+export { VRConfirmModal } from './VRConfirmModal';

@@ -73,7 +73,7 @@ export const enableWebScrollAccessibility = () => {
         width: 1px;
         height: 1px;
         overflow: hidden;
-      }
+      
 
       /* 스크롤 접근성 스크린 리더 표시 */
       .sr-only:focus {
